@@ -23,9 +23,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "../superfinder/node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "../superfinder/src/styles.css"
             ],
-            "scripts": []
+            "scripts": [  
+              "../superfinder/node_modules/jquery/dist/jquery.min.js",
+              "../superfinder/node_modules/popper.js/dist/umd/popper.min.js",
+              "../superfinder/node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
           },
           "configurations": {
             "production": {
