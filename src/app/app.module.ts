@@ -1,13 +1,20 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpHandler } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from "./app.component";
+import { AuthGuard } from './auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LoginComponent } from './login/login.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
-	component: AppComponent
+	component: LoginComponent
+},{
+	path: "admin/dashboard",
+	component: DashboardComponent,
+	canActivate: [AuthGuard]
 },{
 	path: "",
 	redirectTo: "/admin",
@@ -16,7 +23,9 @@ const appRoutes: Routes = [{
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
+		DashboardComponent,
+		LoginComponent
 	],
 	imports: [
 		BrowserModule,
