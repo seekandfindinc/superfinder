@@ -22,28 +22,28 @@
 				<div class="card-body text-left">
 					<div class="tab-content">
 						<div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-							<form class="was-validated">
+							<form class="was-validated" (ngSubmit)="loginSubmit()" #loginForm="ngForm">
 								<div class="form-group">
 									<label>Seek and Find Email</label>
-									<input type="email" class="form-control form-control-sm" required>
+									<input type="email" class="form-control form-control-sm" required [(ngModel)]="email" name="email">
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
 								<div class="form-group">
 									<label>Password</label>
-									<input type="password" class="form-control form-control-sm" required>
+									<input type="password" class="form-control form-control-sm" required [(ngModel)]="password" name="password">
 									<div class="invalid-feedback">Enter password</div>
 								</div>
-								<button type="submit" class="btn btn-secondary btn-sm btn-block">Sign In</button>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="loginForm.form.invalid">Sign In</button>
 							</form>
 						</div>
 						<div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-							<form class="was-validated">
+							<form class="was-validated" (ngSubmit)="newUserSubmit()" #newUserForm="ngForm">
 								<div class="form-group">
 									<label>Seek and Find Email</label>
-									<input type="email" class="form-control form-control-sm" required>
+									<input type="email" class="form-control form-control-sm" required [(ngModel)]="email" name="email">
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
-								<button type="submit" class="btn btn-secondary btn-sm btn-block">Register</button>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="newUserForm.form.invalid">Register</button>
 							</form>
 						</div>
 					</div>
