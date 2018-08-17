@@ -6,11 +6,14 @@ const models = require("./models");
 const Chance = require("chance");
 const chance = new Chance();
 const cors = require("cors");
-const { check, validationResult } = require('express-validator/check');
+const path = require("path");
+const { check, validationResult } = require("express-validator/check");
 
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/", express.static("./dist/superfinder/"));
 
 app.get("/api/user", [
 	check("email").isEmail(),
@@ -65,6 +68,10 @@ app.post("/api/register", [
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
 	});
+});
+
+app.get("/*", function(req,res){
+	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
 });
 
 app.listen(3000, () => console.log("Example app listening on port 3000!"));
