@@ -7,6 +7,9 @@ import { AppComponent } from "./app.component";
 import { AuthGuard } from './auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
+import { OrderComponent } from './order/order.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { SearchPipe } from './search.pipe';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -14,6 +17,10 @@ const appRoutes: Routes = [{
 },{
 	path: "admin/dashboard",
 	component: DashboardComponent,
+	canActivate: [AuthGuard]
+},{
+	path: "admin/dashboard/order/:orderid",
+	component: OrderComponent,
 	canActivate: [AuthGuard]
 },{
 	path: "",
@@ -25,7 +32,10 @@ const appRoutes: Routes = [{
 	declarations: [
 		AppComponent,
 		DashboardComponent,
-		LoginComponent
+		LoginComponent,
+		OrderComponent,
+		NavbarComponent,
+		SearchPipe
 	],
 	imports: [
 		BrowserModule,

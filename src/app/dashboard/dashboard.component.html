@@ -1,16 +1,38 @@
-navbar here
-
+<br>
 <div class="container">
+	<app-navbar></app-navbar>
+	<div class="input-group input-group-sm mb-3">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Search</span>
+		</div>
+		<input [(ngModel)]="searchText" type="text" class="form-control form-control-sm" placeholder="Last Name / Order #">
+		<div class="input-group-append" id="button-addon4">
+			<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newOrderModal">Add Order</button>
+		</div>
+	</div>
 	<div class="row">
-		<div class="col">
-			<div class="alert alert-dark" role="alert">
-				Client Order Number - Client Last Name
+		<div class="col-2" *ngFor="let order of orders | search : searchText">
+			<p class="text-left font-weight-light">
+				<small>{{order.ordernumber}} - {{order.seller_last_name}}</small>
+				<br>
+				<a href="/admin/dashboard/order/{{order.id}}"><i class="fas fa-folder{{order.isOpen ? '-open' : ''}} fa-8x" style="color:#E6DD93;"></i></a>
+			</p>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="newOrderModal" tabindex="-1" role="dialog" aria-labelledby="newOrderModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newOrderModalLabel">Add Order</h5>
+			</div>
+			<div class="modal-body">
+			...
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary">Save</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 			</div>
 		</div>
-		<div class="col"><div class="alert alert-dark" role="alert">A simple dark alert—check it out!</div></div>
-		<div class="col"><div class="alert alert-dark" role="alert">A simple dark alert—check it out!</div></div>
-		<div class="col"><div class="alert alert-dark" role="alert">A simple dark alert—check it out!</div></div>
-		<div class="col"><div class="alert alert-dark" role="alert">A simple dark alert—check it out!</div></div>
-		<div class="col"><div class="alert alert-dark" role="alert">A simple dark alert—check it out!</div></div>
 	</div>
 </div>

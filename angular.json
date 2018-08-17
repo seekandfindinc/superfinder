@@ -23,8 +23,7 @@
               "src/assets"
             ],
             "styles": [
-              "../superfinder/node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "../superfinder/src/styles.css"
+              "src/styles.css"
             ],
             "scripts": [  
               "../superfinder/node_modules/jquery/dist/jquery.min.js",

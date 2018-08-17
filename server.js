@@ -8,7 +8,6 @@ const chance = new Chance();
 const cors = require("cors");
 const { check, validationResult } = require('express-validator/check');
 
- 
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,7 +31,10 @@ app.get("/api/user", [
 	}).then((user) => {
 		if(user){
 			if(bcrypt.compareSync(req.query.password, user.password)){
-				res.send(user)
+				res.send({
+					id: user.id,
+					email: user.email
+				});
 			}
 			else{
 				res.send(false);
