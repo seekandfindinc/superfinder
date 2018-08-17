@@ -22,7 +22,6 @@ app.get("/api/user", [
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ errors: errors.array() });
 	};
-	// console.log(req.query)
 	models.User.find({
 		where:{
 			email: req.query.email
