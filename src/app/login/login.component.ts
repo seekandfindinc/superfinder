@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
 		this.http.post(this.url + "register", {
 			email: this.email
 		}).subscribe((val) => {
+			alert("User Registered. Password will be emailed shortly. Once approved you will be notified.");
 			console.log("POST call successful value returned in body", val);
 		}, response => {
 			console.log("POST call in error", response);
@@ -36,6 +37,9 @@ export class LoginComponent implements OnInit {
 			if(val){
 				localStorage.setItem("currentUser", JSON.stringify(val));
 				this.router.navigate(["/admin/dashboard"]);
+			}
+			else{
+				alert("Try again. Invalid Login");
 			}
 		}, response => {
 			console.log("GET call in error", response);

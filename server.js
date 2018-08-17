@@ -24,7 +24,8 @@ app.get("/api/user", [
 	};
 	models.User.find({
 		where:{
-			email: req.query.email
+			email: req.query.email,
+			approved: true
 		},
 		raw: true
 	}).then((user) => {

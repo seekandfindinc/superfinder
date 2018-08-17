@@ -13,6 +13,11 @@ const User = sequelize.define("User", {
 	password: {
 		type: Sequelize.STRING,
 		allowNull: false
+	},
+	approved: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false,
+		defaultValue: false
 	}
 },{
 	paranoid: true
