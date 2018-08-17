@@ -1,8 +1,8 @@
 <nav aria-label="breadcrumb">
 	<ol class="breadcrumb">
 		<li class="breadcrumb-item" *ngIf="!isOrder">Orders</li>
-		<li class="breadcrumb-item" *ngIf="isOrder"><a href="/admin/dashboard">Orders</a></li>
+		<li class="breadcrumb-item" *ngIf="isOrder"><a routerLink="/admin/dashboard">Orders</a></li>
 		<li class="breadcrumb-item active" *ngIf="isOrder">Order</li>
-		<li class="ml-auto"><a href="#" (click)="logout()">Sign Out</a></li>
+		<li class="ml-auto"><a routerLink="#" (click)="logout()">Sign Out</a></li>
 	</ol>
 </nav>

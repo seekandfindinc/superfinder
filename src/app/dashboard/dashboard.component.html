@@ -15,7 +15,7 @@
 			<p class="text-left font-weight-light">
 				<small>{{order.ordernumber}} - {{order.seller_last_name}}</small>
 				<br>
-				<a href="/admin/dashboard/order/{{order.id}}"><i class="fas fa-folder{{order.isOpen ? '-open' : ''}} fa-8x" style="color:#E6DD93;"></i></a>
+				<a routerLink="/admin/dashboard/order/{{order.id}}"><i class="fas fa-folder{{order.isOpen ? '-open' : ''}} fa-8x" style="color:#E6DD93;"></i></a>
 			</p>
 		</div>
 	</div>
