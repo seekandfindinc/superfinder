@@ -8,49 +8,49 @@ Editing functions for entered order
 	<app-navbar></app-navbar>
 	<div class="card">
 		<div class="card-header">Details</div>
-		<div class="card-header" style="background-color: #f1c40f;">Open</div>
-		<div class="card-header" style="background-color: #27ae60;">Closed</div>
+		<div class="card-header" *ngIf="!order.closed" style="background-color: #f1c40f;">Open</div>
+		<div class="card-header" *ngIf="order.closed" style="background-color: #27ae60;">Closed</div>
 		<div class="card-body">
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Property</div>
-					<div class="font-weight-light">27 Marwood Road North, Port Washington, NY 11050</div>
+					<div class="font-weight-light">{{order.property_address}}</div>
 				</div>
-				<div class="col">
-					<p class="text-right"><button type="button" class="btn btn-dark btn-sm">Mark Closed</button></p>
+				<div class="col" *ngIf="!order.closed">
+					<p class="text-right"><button type="button" class="btn btn-dark btn-sm">Edit</button>&nbsp;<button type="button" class="btn btn-dark btn-sm" (click)="closeOrder(order.id)">Mark Closed</button></p>
 				</div>
 			</div>
 			<br>
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Reference Number</div>
-					<div class="font-weight-light">12345</div>
+					<div class="font-weight-light">{{order.reference_number}}</div>
 				</div>
 				<div class="col">
 					<div class="font-weight-bold">Closing Date</div>
-					<div class="font-weight-light">Monday, June 15, 2015 @ 9:00 AM</div>
+					<div class="font-weight-light">{{order.closing_date ? order.closing_date : "TBD"}}</div>
 				</div>
 			</div>
 			<br>
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Lender</div>
-					<div class="font-weight-light">Bank of America</div>
+					<div class="font-weight-light">{{order.lender}}</div>
 				</div>
 				<div class="col">
 					<div class="font-weight-bold">Corporation</div>
-					<div class="font-weight-light">HSBC</div>
+					<div class="font-weight-light">{{order.corporation}}</div>
 				</div>
 			</div>
 			<br>
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Purchase Price</div>
-					<div class="font-weight-light">$750,000</div>
+					<div class="font-weight-light">{{order.purchase_price | currency : "$"}}</div>
 				</div>
 				<div class="col">
 					<div class="font-weight-bold">Loan Amount</div>
-					<div class="font-weight-light">$736,500</div>
+					<div class="font-weight-light">{{order.loan_amount | currency : "$"}}</div>
 				</div>
 			</div>
 			<br>
@@ -58,18 +58,11 @@ Editing functions for entered order
 				<div class="col">
 					<div class="font-weight-bold">Buyer(s)</div>
 					<div class="row">
-						<div class="col">
+						<div class="col" *ngFor="let field of order.buyers">
 							<div class="font-weight-light">
-								Stephen Pugliese
+								{{field.name}}
 								<br>
-								137-44 70th Ave<br>Flushing, NY 11367
-							</div>
-						</div>
-						<div class="col">
-							<div class="font-weight-light">
-								Melissa Ruvio
-								<br>
-								76 Cornwells Beach Road<br>Sandspoint, NY 11050
+								{{field.address}}
 							</div>
 						</div>
 					</div>
@@ -77,11 +70,11 @@ Editing functions for entered order
 				<div class="col">
 					<div class="font-weight-bold">Seller(s)</div>
 					<div class="row">
-						<div class="col">
+						<div class="col" *ngFor="let field of order.sellers">
 							<div class="font-weight-light">
-								Joseph Saldano
+								{{field.name}}
 								<br>
-								29 Marwood Road North<br>Port Washington, NY 11050
+								{{field.address}}
 							</div>
 						</div>
 					</div>

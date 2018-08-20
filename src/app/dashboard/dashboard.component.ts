@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 
 @Component({
 	selector: 'app-dashboard',
@@ -8,54 +9,62 @@ import { Component, OnInit } from '@angular/core';
 export class DashboardComponent implements OnInit {
 	public buyer_index: number = 0;
 	public seller_index: number = 0;
-	orders = [{
-		id: 1,
-		isOpen: true,
-		ordernumber: 12345,
-		seller_last_name: "Pugliese"
-	},{
-		id: 2,
-		isOpen: false,
-		ordernumber: 12346,
-		seller_last_name: "Ortiz"
-	},{
-		id: 3,
-		isOpen: true,
-		ordernumber: 12347,
-		seller_last_name: "Jones"
-	},{
-		id: 4,
-		isOpen: false,
-		ordernumber: 12348,
-		seller_last_name: "Mahoy"
-	}];
-	private buyerFieldArray: Array<any> = [{
-		name: null,
-		address: null
-	}];
-	private sellerFieldArray: Array<any> = [{
-		name: null,
-		address: null
-	}];
-	private newAttribute: any = {};
-	constructor() { }
-	ngOnInit() { }
+	url = "http://localhost:3000/api/";
+	public orders;
+	private order: any = {
+		buyerFieldArray: [{
+			name: null,
+			address: null
+		}],
+		sellerFieldArray: [{
+			name: null,
+			address: null
+		}]
+	};
+	constructor(private http: HttpClient) { }
+	ngOnInit() {
+		this.http.get(this.url + "orders").subscribe((val) => {
+			this.orders = val;
+			console.log("GET call successful value returned in body", val);
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+	}
 	addBuyer() {
-		this.buyerFieldArray.push(this.newAttribute)
-		this.newAttribute = {};
+		this.order.buyerFieldArray.push({
+			name: null,
+			address: null
+		});
 		this.buyer_index++;
 	}
 	deleteBuyer() {
 		this.buyer_index--;
-		this.buyerFieldArray.splice(-1, 1);
+		this.order.buyerFieldArray.splice(-1, 1);
 	}
 	addSeller() {
-		this.sellerFieldArray.push(this.newAttribute)
-		this.newAttribute = {};
+		this.order.sellerFieldArray.push({
+			name: null,
+			address: null
+		});
 		this.seller_index++;
 	}
 	deleteSeller() {
 		this.seller_index--;
-		this.sellerFieldArray.splice(-1, 1);
+		this.order.sellerFieldArray.splice(-1, 1);
+	}
+	orderSubmit(){
+		this.http.post(this.url + "order", this.order).subscribe((val) => {
+			console.log("POST call successful value returned in body", val);
+		}, response => {
+			console.log("POST call in error", response);
+		}, () => {
+			console.log("The POST observable is now completed.");
+		});
 	}
 }
+
+
+
+

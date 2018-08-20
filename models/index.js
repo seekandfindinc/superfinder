@@ -51,8 +51,13 @@ const Order = sequelize.define("Order", {
 	},
 	closing_date:{
 		type: Sequelize.DATE,
-		allowNull: false
+		allowNull: true
 	},
+	closed:{
+		type: Sequelize.BOOLEAN,
+		allowNull: false,
+		defaultValue: false
+	}
 },{
 	paranoid: true
 });
@@ -83,9 +88,12 @@ const Seller = sequelize.define("Seller", {
 	paranoid: true
 });
 
-Buyer.belongsTo(Order);
-Seller.belongsTo(Order);
+Order.hasMany(Buyer)
+Order.hasMany(Seller)
 
 sequelize.sync();
 
 module.exports["User"] = User;
+module.exports["Order"] = Order;
+module.exports["Buyer"] = Buyer;
+module.exports["Seller"] = Seller;
