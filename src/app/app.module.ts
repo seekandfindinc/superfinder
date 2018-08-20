@@ -10,6 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { OrderComponent } from './order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SearchPipe } from './search.pipe';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -41,7 +42,8 @@ const appRoutes: Routes = [{
 		BrowserModule,
 		RouterModule.forRoot(appRoutes,{enableTracing: false}),
 		HttpClientModule,
-		FormsModule
+		FormsModule,
+		NgbModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

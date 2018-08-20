@@ -11,8 +11,13 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class OrderComponent implements OnInit {
 	id: number;
+	public buyer_index: number;
+	public seller_index: number;
+	inEditMode: boolean = false;
 	url = "http://localhost:3000/api/";
 	public order: any = {
+	};
+	public temp_closing_date: any = {
 	};
 	constructor(private http: HttpClient, private route: ActivatedRoute) { }
 	ngOnInit() {
@@ -41,5 +46,64 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The PUT observable is now completed.");
 		});
+	}
+	editOrder(){
+		this.inEditMode = true;
+		this.buyer_index = this.order.buyers.length - 1;
+		this.seller_index = this.order.sellers.length - 1;
+		if(this.order.closing_date){
+			this.temp_closing_date.date = {
+				year: parseInt(moment(this.order.closing_date).format("YYYY")),
+				month: parseInt(moment(this.order.closing_date).format("MM")),
+				day: parseInt(moment(this.order.closing_date).format("DD"))
+			};
+			this.temp_closing_date.time = {
+				hour: parseInt(moment(this.order.closing_date).format("HH")),
+				minute: parseInt(moment(this.order.closing_date).format("mm"))
+			};
+		}
+	}
+	saveOrder(){
+		if(this.temp_closing_date.date){
+			this.order.closing_date = moment({
+				year: this.temp_closing_date.date.year,
+				month: this.temp_closing_date.date.month - 1,
+				day: this.temp_closing_date.date.day,
+				hour: this.temp_closing_date.time.hour,
+				minute: this.temp_closing_date.time.minute
+			}).format("YYYY-MM-DD HH:mm:ss");
+		}
+		this.http.put(this.url + "order/" + this.id, this.order).subscribe((val) => {
+			if(val){
+				this.inEditMode = false;
+			}
+			console.log("PUT call successful value returned in body", val);
+		}, response => {
+			console.log("PUT call in error", response)
+		}, () => {
+			console.log("The PUT observable is now completed.");
+		});
+	}
+	addBuyer() {
+		this.order.buyers.push({
+			name: null,
+			address: null
+		});
+		this.buyer_index++;
+	}
+	deleteBuyer() {
+		this.buyer_index--;
+		this.order.buyers.splice(-1, 1);
+	}
+	addSeller() {
+		this.order.sellers.push({
+			name: null,
+			address: null
+		});
+		this.seller_index++;
+	}
+	deleteSeller() {
+		this.seller_index--;
+		this.order.sellers.splice(-1, 1);
 	}
 }

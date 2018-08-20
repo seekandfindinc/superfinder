@@ -9,6 +9,7 @@ const cors = require("cors");
 const path = require("path");
 const { check, validationResult } = require("express-validator/check");
 const lodash = require("lodash");
+const moment = require("moment");
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -123,7 +124,46 @@ app.put("/api/order/:id", function(req, res){
 			id: req.params.id
 		}
 	}).then((order) => {
-		res.send(true);
+		if(req.body.closed){
+			res.send(true);
+		}
+		else{
+			models.Buyer.update({
+				deletedAt: moment().format("YYYY-MM-DD HH:mm:ss")
+			},{
+				where:{
+					OrderId: req.params.id
+				}
+			}).then((buyers) => {
+				models.Seller.update({
+					deletedAt: moment().format("YYYY-MM-DD HH:mm:ss")
+				},{
+					where:{
+						OrderId: req.params.id
+					}
+				}).then((sellers) => {
+					lodash.forEach(req.body.buyers, function(buyer){
+						buyer.OrderId = req.params.id;
+					});
+					lodash.forEach(req.body.sellers, function(seller){
+						seller.OrderId = req.params.id;
+					});
+					models.Buyer.bulkCreate(req.body.buyers).then((buyers) => {
+						models.Seller.bulkCreate(req.body.sellers).then((sellers) => {
+							res.send(true);
+						}).catch((err) => {
+							return res.status(500).send(err.stack);
+						});
+					}).catch((err) => {
+						return res.status(500).send(err.stack);
+					});
+				}).catch((err) => {
+					res.status(500).send(err.stack);
+				});
+			}).catch((err) => {
+				res.status(500).send(err.stack);
+			});
+		}
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
