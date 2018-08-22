@@ -17,8 +17,12 @@ export class OrderComponent implements OnInit {
 	url = "http://localhost:3000/api/";
 	public order: any = {
 	};
+	public document: any = {
+	};
 	public temp_closing_date: any = {
 	};
+	public documents: any = [
+	];
 	constructor(private http: HttpClient, private route: ActivatedRoute) { }
 	ngOnInit() {
 		this.route.params.subscribe(params => {
@@ -26,6 +30,14 @@ export class OrderComponent implements OnInit {
 		});
 		this.http.get(this.url + "order/" + this.id).subscribe((val) => {
 			this.order = val;
+			console.log("GET call successful value returned in body", val);
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+		this.http.get(this.url + "documents/" + this.id).subscribe((val) => {
+			this.documents = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -105,5 +117,27 @@ export class OrderComponent implements OnInit {
 	deleteSeller() {
 		this.seller_index--;
 		this.order.sellers.splice(-1, 1);
+	}
+	onFileChange(event) {
+		if(event.target.files.length > 0) {
+			let file = event.target.files[0];
+			this.document.file = file;
+		}
+	}
+	docSubmit(id){
+		let formData = new FormData();
+		formData.append("description", this.document.description);
+		formData.append("file", this.document.file);
+		formData.append("OrderId", id);
+		this.http.post(this.url + "document/", formData).subscribe((val) => {
+			console.log("PUT call successful value returned in body", val);
+		}, response => {
+			console.log("PUT call in error", response)
+		}, () => {
+			console.log("The PUT observable is now completed.");
+		});
+	}
+	download(id){
+		window.open(this.url + "document/" + id, '_self');
 	}
 }

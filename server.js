@@ -10,6 +10,11 @@ const path = require("path");
 const { check, validationResult } = require("express-validator/check");
 const lodash = require("lodash");
 const moment = require("moment");
+const multer  = require("multer");
+const stream = require("stream");
+const mime = require("mime");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -72,7 +77,7 @@ app.post("/api/register", [
 	});
 });
 
-app.get("/api/orders", function(req, res){
+app.get("/api/order", function(req, res){
 	models.Order.findAll({
 		raw: true
 	}).then((orders) => {
@@ -193,6 +198,53 @@ app.post("/api/order", function(req, res){
 		}).catch((err) => {
 			return res.status(500).send(err.stack);
 		});
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/document/:id", function(req, res){
+	models.Document.find({
+		where:{
+			id: req.params.id
+		},
+		raw: true,
+		attributes: ["filename", "file", "createdAt"]
+	}).then((document) => {
+		var fileContents = Buffer.from(document.file, "base64");
+		var mimetype = mime.getType(document.filename);
+		res.setHeader("Content-disposition", "attachment; filename=" + document.filename);
+		res.setHeader("Content-type", mimetype);
+		var readStream = new stream.PassThrough();
+		readStream.end(fileContents);
+		readStream.pipe(res);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/documents/:id", function(req, res){
+	models.Document.findAll({
+		where:{
+			OrderId: req.params.id
+		},
+		raw: true,
+		attributes: ["description", "id", "createdAt"]
+	}).then((documents) => {
+		res.send(documents);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.post("/api/document", upload.single("file"), function(req, res){
+	models.Document.create({
+		filename: req.file.originalname,
+		description: req.body.description,
+		file: req.file.buffer,
+		OrderId: req.body.OrderId
+	}).then((document) => {
+		return res.send(document);
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
 	});

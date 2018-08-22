@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
 	};
 	constructor(private http: HttpClient) { }
 	ngOnInit() {
-		this.http.get(this.url + "orders").subscribe((val) => {
+		this.http.get(this.url + "order").subscribe((val) => {
 			this.orders = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
@@ -64,7 +64,3 @@ export class DashboardComponent implements OnInit {
 		});
 	}
 }
-
-
-
-
