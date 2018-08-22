@@ -1,8 +1,3 @@
-<!--
-TODO's
-=======
-Editing functions for entered order
--->
 <br>
 <div class="container">
 	<app-navbar></app-navbar>
@@ -19,144 +14,151 @@ Editing functions for entered order
 				<div class="col" *ngIf="!order.closed">
 					<p class="text-right">
 						<button type="button" class="btn btn-dark btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
-						<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()">Save</button>
+						<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()" [disabled]="editOrderForm.form.invalid">Save</button>
 						&nbsp;<button type="button" class="btn btn-dark btn-sm" (click)="closeOrder(order.id)">Mark Closed</button></p>
 				</div>
 			</div>
 			<br>
-			<div class="row">
-				<div class="col">
-					<div class="font-weight-bold">Reference Number</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.reference_number}}</div>
-					<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number">
-				</div>
-				<div class="col">
-					<div class="font-weight-bold">Closing Date</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "EEEE, LLLL d, yyyy @ hh:mm a") : "TBD"}}</div>
-					<div class="input-group input-group-sm" *ngIf="inEditMode">
-						<input class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="temp_closing_date" [(ngModel)]="temp_closing_date.date" ngbDatepicker #d="ngbDatepicker">
-						<div class="input-group-append">
-							<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-							<i class="far fa-calendar-alt"></i>
-							</button>
-						</div>
+			<form class="was-validated" #editOrderForm="ngForm">
+				<div class="row">
+					<div class="col">
+						<div class="font-weight-bold">Reference Number</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.reference_number}}</div>
+						<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number">
+						<div class="invalid-feedback">Please add reference number</div>
 					</div>
-					<ngb-timepicker [(ngModel)]="temp_closing_date.time" *ngIf="inEditMode" [hourStep]="1" [minuteStep]="15"></ngb-timepicker>
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col">
-					<div class="font-weight-bold">Lender</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.lender}}</div>
-					<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender">
-				</div>
-				<div class="col">
-					<div class="font-weight-bold">Corporation</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.corporation}}</div>
-					<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation">
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col">
-					<div class="font-weight-bold">Purchase Price</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.purchase_price | currency : "$"}}</div>
-					<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
-						<div class="input-group-prepend">
-							<span class="input-group-text">$</span>
-						</div>
-						<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.purchase_price">
-						<div class="input-group-append">
-							<span class="input-group-text">.00</span>
-						</div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="font-weight-bold">Loan Amount</div>
-					<div class="font-weight-light" *ngIf="!inEditMode">{{order.loan_amount | currency : "$"}}</div>
-					<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
-						<div class="input-group-prepend">
-							<span class="input-group-text">$</span>
-						</div>
-						<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.loan_amount">
-						<div class="input-group-append">
-							<span class="input-group-text">.00</span>
-						</div>
-					</div>					
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col">
-					<div class="font-weight-bold">Buyer(s)</div>
-					<div class="row" *ngIf="!inEditMode">
-						<div class="col" *ngFor="let field of order.buyers">
-							<div class="font-weight-light">
-								{{field.name}}
-								<br>
-								{{field.address}}
+					<div class="col">
+						<div class="font-weight-bold">Closing Date</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "EEEE, LLLL d, yyyy @ hh:mm a") : "TBD"}}</div>
+						<div class="input-group input-group-sm" *ngIf="inEditMode">
+							<input class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="temp_closing_date" [(ngModel)]="temp_closing_date.date" ngbDatepicker #d="ngbDatepicker">
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+								<i class="far fa-calendar-alt"></i>
+								</button>
 							</div>
 						</div>
+						<ngb-timepicker [(ngModel)]="temp_closing_date.time" *ngIf="inEditMode" [hourStep]="1" [minuteStep]="15"></ngb-timepicker>
 					</div>
-					<table class="table table-sm table-bordered" *ngIf="inEditMode">
-						<thead class="thead-light">
-							<tr>
-								<th scope="col">Name</th>
-								<th scope="col">Address</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr *ngFor="let field of order.buyers; index as i;">
-								<td><input type="text" class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"></td>
-								<td><input type="text" class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"></td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="2">
-									<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
-									<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
 				</div>
-				<div class="col">
-					<div class="font-weight-bold">Seller(s)</div>
-					<div class="row" *ngIf="!inEditMode">
-						<div class="col" *ngFor="let field of order.sellers">
-							<div class="font-weight-light">
-								{{field.name}}
-								<br>
-								{{field.address}}
+				<br>
+				<div class="row">
+					<div class="col">
+						<div class="font-weight-bold">Lender</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.lender}}</div>
+						<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender">
+						<div class="invalid-feedback">Please add lender</div>
+					</div>
+					<div class="col">
+						<div class="font-weight-bold">Corporation</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.corporation}}</div>
+						<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation">
+						<div class="invalid-feedback">Please add corporation</div>
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col">
+						<div class="font-weight-bold">Purchase Price</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.purchase_price | currency : "$"}}</div>
+						<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
+							<div class="input-group-prepend">
+								<span class="input-group-text">$</span>
 							</div>
+							<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.purchase_price">
+							<div class="input-group-append">
+								<span class="input-group-text">.00</span>
+							</div>
+							<div class="invalid-feedback">Please add purchase price</div>
 						</div>
 					</div>
-					<table class="table table-sm table-bordered" *ngIf="inEditMode">
-						<thead class="thead-light">
-							<tr>
-								<th scope="col">Name</th>
-								<th scope="col">Address</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr *ngFor="let field of order.sellers; index as i;">
-								<td><input type="text" class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"></td>
-								<td><input type="text" class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"></td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="2">
-									<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
-									<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
-								</td>
-							</tr>
-						</tfoot>
-					</table>
+					<div class="col">
+						<div class="font-weight-bold">Loan Amount</div>
+						<div class="font-weight-light" *ngIf="!inEditMode">{{order.loan_amount | currency : "$"}}</div>
+						<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
+							<div class="input-group-prepend">
+								<span class="input-group-text">$</span>
+							</div>
+							<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.loan_amount">
+							<div class="input-group-append">
+								<span class="input-group-text">.00</span>
+							</div>
+							<div class="invalid-feedback">Please add loan amount</div>
+						</div>					
+					</div>
 				</div>
-			</div>
+				<br>
+				<div class="row">
+					<div class="col">
+						<div class="font-weight-bold">Buyer(s)</div>
+						<div class="row" *ngIf="!inEditMode">
+							<div class="col" *ngFor="let field of order.buyers">
+								<div class="font-weight-light">
+									{{field.name}}
+									<br>
+									{{field.address}}
+								</div>
+							</div>
+						</div>
+						<table class="table table-sm table-bordered" *ngIf="inEditMode">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Address</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let field of order.buyers; index as i;">
+									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="2">
+										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
+										<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+					<div class="col">
+						<div class="font-weight-bold">Seller(s)</div>
+						<div class="row" *ngIf="!inEditMode">
+							<div class="col" *ngFor="let field of order.sellers">
+								<div class="font-weight-light">
+									{{field.name}}
+									<br>
+									{{field.address}}
+								</div>
+							</div>
+						</div>
+						<table class="table table-sm table-bordered" *ngIf="inEditMode">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Address</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let field of order.sellers; index as i;">
+									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="2">
+										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
+										<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 	<br>

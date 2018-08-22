@@ -56,6 +56,8 @@ export class DashboardComponent implements OnInit {
 	}
 	orderSubmit(){
 		this.http.post(this.url + "order", this.order).subscribe((val) => {
+			$("#newOrderModal").modal("hide");
+			this.ngOnInit();
 			console.log("POST call successful value returned in body", val);
 		}, response => {
 			console.log("POST call in error", response);

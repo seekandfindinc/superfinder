@@ -130,6 +130,8 @@ export class OrderComponent implements OnInit {
 		formData.append("file", this.document.file);
 		formData.append("OrderId", id);
 		this.http.post(this.url + "document/", formData).subscribe((val) => {
+			$("#newDocumentModal").modal("hide");
+			this.ngOnInit();
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
