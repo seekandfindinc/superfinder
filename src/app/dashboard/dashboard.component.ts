@@ -10,7 +10,7 @@ export class DashboardComponent implements OnInit {
 	public buyer_index: number = 0;
 	public seller_index: number = 0;
 	url = "http://localhost:3000/api/";
-	public orders;
+	public orders: any = [];
 	private order: any = {
 		buyerFieldArray: [{
 			name: null,
