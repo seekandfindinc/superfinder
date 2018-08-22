@@ -15,7 +15,7 @@
 					<p class="text-right">
 						<button type="button" class="btn btn-dark btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
 						<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()" [disabled]="editOrderForm.form.invalid">Save</button>
-						&nbsp;<button type="button" class="btn btn-dark btn-sm" (click)="closeOrder(order.id)">Mark Closed</button></p>
+						&nbsp;<button type="button" class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#confirmModal">Mark Closed</button></p>
 				</div>
 			</div>
 			<br>
@@ -206,6 +206,28 @@
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 				</div>
 			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Confirmation</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to mark this file closed?</p>
+				<p class="text-danger"><small>This action is not reversable</small></p>
+			</div>
+			<div class="modal-footer" style="display: block;">
+				<div class="row">
+					<div class="col"><button type="button" class="btn btn-danger btn-block" data-dismiss="modal">No</button></div>
+					<div class="col"><button type="button" class="btn btn-success btn-block" (click)="closeOrder(order.id)">Yes</button></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

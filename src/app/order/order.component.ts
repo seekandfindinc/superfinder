@@ -49,9 +49,8 @@ export class OrderComponent implements OnInit {
 		this.http.put(this.url + "order/" + this.id,{
 			closed: true
 		}).subscribe((val) => {
-			if(val){
-				this.order.closed = true;
-			}
+			this.order.closed = true;
+			$("#confirmModal").modal("hide");
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
