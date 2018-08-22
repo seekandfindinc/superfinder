@@ -10,13 +10,18 @@
 			<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newOrderModal">Add Order</button>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row" *ngIf="orders.length > 0">
 		<div class="col-2" *ngFor="let order of orders | search : searchText">
 			<p class="text-left font-weight-light">
 				<small>{{order.reference_number}}</small>
 				<br>
 				<a [routerLink]="['/admin/dashboard/order', order.id]"><i class="fas fa-folder{{order.closed ? '' : '-open'}} fa-8x" style="color:#E6DD93;"></i></a>
 			</p>
+		</div>
+	</div>
+	<div class="row" *ngIf="orders.length < 1">
+		<div class="col">
+			<div class="alert alert-light" role="alert">No orders found</div>
 		</div>
 	</div>
 </div>
