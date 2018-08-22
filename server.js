@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
-const app = express();
 const models = require("./models");
 const Chance = require("chance");
 const chance = new Chance();
@@ -13,8 +12,20 @@ const moment = require("moment");
 const multer  = require("multer");
 const stream = require("stream");
 const mime = require("mime");
+const nodemailer = require("nodemailer");
+const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+const fs = require("fs");
+const new_account_email = fs.readFileSync("email_templates/new_account_email.html", "utf8");
+const config = require("./config");
+const transporter = nodemailer.createTransport({
+	service: "gmail",
+	auth: {
+		user: config.email_username,
+		pass: config.email_password
+	}
+});
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -66,12 +77,22 @@ app.post("/api/register", [
 		return res.status(422).json({ errors: errors.array() });
 	};
 	var password = chance.word({length: 12});
-	console.log(password);
 	models.User.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(password, 10)
 	}).then((user) => {
-		return res.send(user)
+		transporter.sendMail({
+			from: "team@seekandfindinc.com",
+			to: req.body.email,
+			subject: "New User",
+			html: new_account_email.replace("[EMAIL]", req.body.email).replace("[PASSWORD]", password)
+		}, (error, info) => {
+			if (error) {
+				return console.log(error);
+			}
+			console.log("Message sent: %s", info.messageId);
+			return res.send(true);
+		});
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
 	});
