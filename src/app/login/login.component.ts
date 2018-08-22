@@ -9,14 +9,15 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
 	url = "http://localhost:3000/api/";
-	public email: string;
+	public login_email: string;
+	public register_email: string;
 	public password: string;
 	constructor(private http: HttpClient, private router: Router) { }
 	ngOnInit() {
 	}
 	newUserSubmit() {
 		this.http.post(this.url + "register", {
-			email: this.email
+			email: this.register_email
 		}).subscribe((val) => {
 			alert("User Registered. Password will be emailed shortly. Once approved you will be notified.");
 			console.log("POST call successful value returned in body", val);
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
 	loginSubmit(){
 		this.http.get(this.url + "user", {
 			params: {
-				email: this.email,
+				email: this.login_email,
 				password: this.password
 			}
 		}).subscribe((val) => {
