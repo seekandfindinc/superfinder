@@ -7,11 +7,12 @@ import { HttpClient } from "@angular/common/http";
 	styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+	public searchText: string;
 	public buyer_index: number = 0;
 	public seller_index: number = 0;
 	url = "http://localhost:3000/api/";
 	public orders: any = [];
-	private order: any = {
+	public order: any = {
 		buyerFieldArray: [{
 			name: null,
 			address: null
