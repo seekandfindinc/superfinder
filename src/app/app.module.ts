@@ -11,6 +11,8 @@ import { OrderComponent } from './order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SearchPipe } from './search.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import * as $ from "jquery";
+import * as bootstrap from "bootstrap";
 
 const appRoutes: Routes = [{
 	path: "admin",

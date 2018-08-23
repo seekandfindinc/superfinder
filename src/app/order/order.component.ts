@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
-
+import * as moment from "moment";
 
 @Component({
 	selector: 'app-order',
