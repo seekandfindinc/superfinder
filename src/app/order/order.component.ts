@@ -29,6 +29,7 @@ export class OrderComponent implements OnInit {
 		});
 		this.http.get("/api/order/" + this.id).subscribe((val) => {
 			this.order = val;
+			this.order.lastUpdated = moment(this.order.updatedAt).format("dddd, MMMM Do YYYY hh:mm A");
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);

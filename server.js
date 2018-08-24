@@ -265,6 +265,7 @@ app.get("/api/documents/:id", function(req, res){
 			OrderId: req.params.id
 		},
 		raw: true,
+		order:[["createdAt", "DESC"]],
 		attributes: ["description", "id", "createdAt"]
 	}).then((documents) => {
 		res.send(documents);
