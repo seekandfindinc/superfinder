@@ -34,12 +34,12 @@ http.createServer(function (req, res) {
 		Location: "https://localhost:" + config.ssl_port
 	});
 	res.end();
-}).listen(config.no_ssl_port, "localhost");
+}).listen(config.no_ssl_port, config.web_host);
 
 https.createServer({
 	key: config.key,
 	cert: config.cert
-}, app).listen(config.ssl_port, "localhost");
+}, app).listen(config.ssl_port, config.web_host);
 
 app.use(cors())
 app.use(bodyParser.json());
