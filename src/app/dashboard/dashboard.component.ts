@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
 		this.order.sellerFieldArray.splice(-1, 1);
 	}
 	orderSubmit(){
-		this.http.post("/order", this.order).subscribe((val) => {
+		this.http.post("/api/order", this.order).subscribe((val) => {
 			$("#newOrderModal").modal("hide");
 			this.ngOnInit();
 			console.log("POST call successful value returned in body", val);

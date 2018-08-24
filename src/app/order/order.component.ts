@@ -51,6 +51,7 @@ export class OrderComponent implements OnInit {
 		}).subscribe((val) => {
 			this.order.closed = true;
 			$("#confirmModal").modal("hide");
+			this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
@@ -88,6 +89,7 @@ export class OrderComponent implements OnInit {
 			if(val){
 				this.inEditMode = false;
 			}
+			this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
