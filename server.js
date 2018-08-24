@@ -30,8 +30,9 @@ const transporter = nodemailer.createTransport({
 });
 
 http.createServer(function (req, res) {
+	var header = req.headers['host'];
 	res.writeHead(301, {
-		Location: "https://" + req.headers['host'] + ":" + config.ssl_port
+		Location: "https://" + header.slice(0, header.search(":")) + ":" + config.ssl_port + req.url
 	});
 	res.end();
 }).listen(config.no_ssl_port, config.web_host);
@@ -288,4 +289,3 @@ app.post("/api/document", upload.single("file"), function(req, res){
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
 });
-
