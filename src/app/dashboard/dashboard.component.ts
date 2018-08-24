@@ -10,7 +10,6 @@ export class DashboardComponent implements OnInit {
 	public searchText: string;
 	public buyer_index: number = 0;
 	public seller_index: number = 0;
-	url = "http://localhost:3000/api/";
 	public orders: any = [];
 	public order: any = {
 		buyerFieldArray: [{
@@ -24,7 +23,7 @@ export class DashboardComponent implements OnInit {
 	};
 	constructor(private http: HttpClient) { }
 	ngOnInit() {
-		this.http.get(this.url + "order").subscribe((val) => {
+		this.http.get("/api/order").subscribe((val) => {
 			this.orders = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
@@ -56,7 +55,7 @@ export class DashboardComponent implements OnInit {
 		this.order.sellerFieldArray.splice(-1, 1);
 	}
 	orderSubmit(){
-		this.http.post(this.url + "order", this.order).subscribe((val) => {
+		this.http.post("/order", this.order).subscribe((val) => {
 			$("#newOrderModal").modal("hide");
 			this.ngOnInit();
 			console.log("POST call successful value returned in body", val);

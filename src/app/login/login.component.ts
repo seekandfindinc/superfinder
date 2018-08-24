@@ -8,7 +8,6 @@ import { Router } from "@angular/router";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-	url = "http://localhost:3000/api/";
 	public login_email: string;
 	public register_email: string;
 	public password: string;
@@ -16,7 +15,7 @@ export class LoginComponent implements OnInit {
 	ngOnInit() {
 	}
 	newUserSubmit() {
-		this.http.post(this.url + "register", {
+		this.http.post("/api/register", {
 			email: this.register_email
 		}).subscribe((val) => {
 			alert("User Registered. Password will be emailed shortly. Once approved you will be notified.");
@@ -28,7 +27,7 @@ export class LoginComponent implements OnInit {
 		});
 	}
 	loginSubmit(){
-		this.http.get(this.url + "user", {
+		this.http.get("/api/user", {
 			params: {
 				email: this.login_email,
 				password: this.password

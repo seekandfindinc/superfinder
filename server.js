@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const https = require("https");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const models = require("./models");
@@ -26,6 +28,18 @@ const transporter = nodemailer.createTransport({
 		pass: config.email_password
 	}
 });
+
+http.createServer(function (req, res) {
+	res.writeHead(301, {
+		Location: "https://localhost:" + config.ssl_port
+	});
+	res.end();
+}).listen(config.no_ssl_port, "localhost");
+
+https.createServer({
+	key: config.key,
+	cert: config.cert
+}, app).listen(config.ssl_port, "localhost");
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -275,4 +289,3 @@ app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
 });
 
-app.listen(3000, () => console.log("Example app listening on port 3000!"));

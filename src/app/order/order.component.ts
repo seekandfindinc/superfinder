@@ -14,7 +14,6 @@ export class OrderComponent implements OnInit {
 	public buyer_index: number;
 	public seller_index: number;
 	inEditMode: boolean = false;
-	url = "http://localhost:3000/api/";
 	public order: any = {
 	};
 	public document: any = {
@@ -28,7 +27,7 @@ export class OrderComponent implements OnInit {
 		this.route.params.subscribe(params => {
 			this.id = +params.orderid;
 		});
-		this.http.get(this.url + "order/" + this.id).subscribe((val) => {
+		this.http.get("/api/order/" + this.id).subscribe((val) => {
 			this.order = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
@@ -36,7 +35,7 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The GET observable is now completed.");
 		});
-		this.http.get(this.url + "documents/" + this.id).subscribe((val) => {
+		this.http.get("/api/documents/" + this.id).subscribe((val) => {
 			this.documents = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
@@ -46,7 +45,7 @@ export class OrderComponent implements OnInit {
 		});
 	}
 	closeOrder(id){
-		this.http.put(this.url + "order/" + this.id,{
+		this.http.put("/api/order/" + this.id,{
 			closed: true
 		}).subscribe((val) => {
 			this.order.closed = true;
@@ -84,7 +83,7 @@ export class OrderComponent implements OnInit {
 				minute: this.temp_closing_date.time.minute
 			}).format("YYYY-MM-DD HH:mm:ss");
 		}
-		this.http.put(this.url + "order/" + this.id, this.order).subscribe((val) => {
+		this.http.put("/api/order/" + this.id, this.order).subscribe((val) => {
 			if(val){
 				this.inEditMode = false;
 			}
@@ -128,7 +127,7 @@ export class OrderComponent implements OnInit {
 		formData.append("description", this.document.description);
 		formData.append("file", this.document.file);
 		formData.append("OrderId", id);
-		this.http.post(this.url + "document/", formData).subscribe((val) => {
+		this.http.post("/api/document/", formData).subscribe((val) => {
 			$("#newDocumentModal").modal("hide");
 			this.ngOnInit();
 			console.log("PUT call successful value returned in body", val);
@@ -139,6 +138,6 @@ export class OrderComponent implements OnInit {
 		});
 	}
 	download(id){
-		window.open(this.url + "document/" + id, '_self');
+		window.open("/api/document/" + id, '_self');
 	}
 }
