@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport({
 
 http.createServer(function (req, res) {
 	res.writeHead(301, {
-		Location: "https://" + config.web_host + ":" + config.ssl_port
+		Location: "https://" + req.headers['host'] + ":" + config.ssl_port
 	});
 	res.end();
 }).listen(config.no_ssl_port, config.web_host);
