@@ -158,7 +158,12 @@
 				</div>
 			</form>
 		</div>
-		<div class="card-footer text-muted">Last Updated {{order.lastUpdated}}</div>
+		<div class="card-footer text-muted">
+			<div class="row">
+				<div class="col-6">Last Updated {{order.lastUpdated}}</div>
+				<div class="col-6 text-right">Created {{order.dateofCreation}}</div>
+			</div>
+		</div>
 	</div>
 	<br>
 	<div class="card">
