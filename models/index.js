@@ -35,7 +35,7 @@ const Order = sequelize.define("Order", {
 	},
 	lender:{
 		type: Sequelize.STRING,
-		allowNull: false
+		allowNull: true
 	},
 	corporation:{
 		type: Sequelize.STRING,
@@ -47,7 +47,7 @@ const Order = sequelize.define("Order", {
 	},
 	loan_amount:{
 		type: Sequelize.FLOAT,
-		allowNull: false
+		allowNull: true
 	},
 	closing_date:{
 		type: Sequelize.DATE,
