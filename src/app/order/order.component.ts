@@ -31,6 +31,7 @@ export class OrderComponent implements OnInit {
 			this.order = val;
 			this.order.lastUpdated = moment(this.order.updatedAt).format("dddd, MMMM Do YYYY hh:mm A");
 			this.order.dateofCreation = moment(this.order.createdAt).format("dddd, MMMM Do YYYY hh:mm A");
+			this.order.closed_date = this.order.closed_date ? moment(this.order.closed_date).format("dddd, MMMM Do YYYY hh:mm A") : null;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -48,7 +49,8 @@ export class OrderComponent implements OnInit {
 	}
 	closeOrder(id){
 		this.http.put("/api/order/" + this.id,{
-			closed: true
+			closed: true,
+			closed_date: moment().format("YYYY-MM-DD HH:mm:ss")
 		}).subscribe((val) => {
 			this.order.closed = true;
 			$("#confirmModal").modal("hide");

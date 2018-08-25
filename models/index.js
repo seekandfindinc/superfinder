@@ -57,6 +57,10 @@ const Order = sequelize.define("Order", {
 		type: Sequelize.BOOLEAN,
 		allowNull: false,
 		defaultValue: false
+	},
+	closed_date:{
+		type: Sequelize.DATE,
+		allowNull: true
 	}
 },{
 	paranoid: true
