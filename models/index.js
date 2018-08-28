@@ -109,14 +109,33 @@ const Document = sequelize.define("Document", {
 	paranoid: true
 });
 
-Order.hasMany(Buyer)
-Order.hasMany(Seller)
-Order.hasMany(Document)
+const OrderForward = sequelize.define("OrderForward", {
+	email:{
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	subject:{
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	html:{
+		type: Sequelize.TEXT,
+		allowNull: false
+	}
+},{
+	paranoid: true
+});
 
-sequelize.sync();
+Order.hasMany(Buyer);
+Order.hasMany(Seller);
+Order.hasMany(Document);
+Order.hasMany(OrderForward);
+
+sequelize.sync()
 
 module.exports["User"] = User;
 module.exports["Order"] = Order;
 module.exports["Buyer"] = Buyer;
 module.exports["Seller"] = Seller;
 module.exports["Document"] = Document;
+module.exports["OrderForward"] = OrderForward;

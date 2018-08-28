@@ -11,16 +11,32 @@
 			</div>
 		</div>
 		<div class="card-body">
+			<div class="alert alert-info collapse" role="alert" id="forwardSent">
+				This order has been forwarded
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Property</div>
 					<div class="font-weight-light">{{order.property_address}}</div>
 				</div>
 				<div class="col" *ngIf="!order.closed">
-					<p class="text-right">
-						<button type="button" class="btn btn-dark btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
-						<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()" [disabled]="editOrderForm.form.invalid">Save</button>
-						&nbsp;<button type="button" class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#confirmModal">Mark Closed</button></p>
+					<div class="text-right">
+						<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+							<button type="button" class="btn btn-dark btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
+							<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()" [disabled]="editOrderForm.form.invalid">Save</button>
+							<button type="button" class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#confirmModal">Mark Closed</button>
+							<div class="btn-group" role="group">
+								<button id="btnFunctions" type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Functions</button>
+								<div class="dropdown-menu" aria-labelledby="btnFunctions">
+									<a class="dropdown-item" data-toggle="modal" data-target="#emailForwardModal">Generate Email Forward</a>
+									<a class="dropdown-item">Generate Invoice</a>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<br>
@@ -171,24 +187,41 @@
 		</div>
 	</div>
 	<br>
-	<div class="card">
-		<div class="card-header">Documents</div>
-		<div class="card-body">
-			<div class="row" *ngIf="!order.closed">
-				<div class="col">
-					<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#newDocumentModal">Add Document</button>
-				</div>
-			</div>
-			<br *ngIf="!order.closed">
-			<div *ngIf="documents.length > 0">
-				<div class="alert alert-dark" role="alert" *ngFor="let doc of documents">
-					<div class="row">
-						<div class="col-6"><a (click)="download(doc.id)"><i class="fas fa-file fa-lg"></i></a>&nbsp;{{doc.description}}</div>
-						<div class="col-6 text-right">Uploaded @ {{doc.createdAt | date : "yyyy-MM-dd hh:mm a"}}</div>
+	<div class="row">
+		<div class="col-7">
+			<div class="card">
+				<div class="card-header">Documents</div>
+				<div class="card-body">
+					<div class="row" *ngIf="!order.closed">
+						<div class="col">
+							<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#newDocumentModal">Add Document</button>
+						</div>
 					</div>
+					<br *ngIf="!order.closed">
+					<div *ngIf="documents.length > 0">
+						<div class="alert alert-dark" role="alert" *ngFor="let doc of documents">
+							<div class="row">
+								<div class="col-6"><a (click)="download(doc.id)"><i class="fas fa-file fa-lg"></i></a>&nbsp;{{doc.description}}</div>
+								<div class="col-6 text-right">Uploaded @ {{doc.createdAt | date : "yyyy-MM-dd hh:mm a"}}</div>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="documents.length < 1">No Documents</div>
 				</div>
 			</div>
-			<div *ngIf="documents.length < 1">No Documents</div>
+		</div>
+		<div class="col">
+			<div class="card">
+				<div class="card-header">Last Email Forward</div>
+				<div class="card-body">
+					<p class="card-text" *ngIf="last_forward">
+						<label>To:</label> {{last_forward.email}}
+						<br>
+						<small class="text-muted">Sent on {{last_forward.createdAt | date: "yyyy-MM-dd hh:mm a"}}</small>
+					</p>
+					<p class="card-text" *ngIf="!last_forward">No Previous Forward</p>
+				</div>
+			</div>
 		</div>
 	</div>
 	<br>
@@ -237,6 +270,27 @@
 					<div class="col"><button type="button" class="btn btn-success btn-block" (click)="closeOrder(order.id)">Yes</button></div>
 				</div>
 			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="emailForwardModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form class="was-validated" (ngSubmit)="forwardSubmit(order.id)" #forwardForm="ngForm">
+				<div class="modal-header">
+					<h5 class="modal-title" id="newDocumentModalLabel">Forward Email Order</h5>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Email Address</label>
+						<input type="email" required email class="form-control form-control-sm" name="email" [(ngModel)]="forward.email" placeholder="Email to Forward To">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" [disabled]="forwardForm.form.invalid">Send</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

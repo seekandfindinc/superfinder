@@ -20,6 +20,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const fs = require("fs");
 const new_account_email = fs.readFileSync("email_templates/new_account_email.html", "utf8");
+const forward_order_email = fs.readFileSync("email_templates/forward_order_email.html", "utf8");
 const config = require("./config");
 const transporter = nodemailer.createTransport({
 	service: "gmail",
@@ -233,6 +234,44 @@ app.post("/api/order", function(req, res){
 			});
 		}).catch((err) => {
 			return res.status(500).send(err.stack);
+		});
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/order/:id/forward/recent", function(req, res){
+	models.OrderForward.find({
+		where:{
+			OrderId: req.params.id
+		},
+		raw: true,
+		order:[["createdAt", "DESC"]]
+	}).then((orderforward) => {
+		res.send(orderforward);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.post("/api/order/:id/forward", function(req, res){
+	models.OrderForward.create({
+		email: req.body.email,
+		subject: "New Order",
+		html: forward_order_email,
+		OrderId: req.params.id,
+	}).then((orderforward) => {
+		transporter.sendMail({
+			from: "team@seekandfindinc.com",
+			to: req.body.email,
+			subject: "New Order",
+			html: forward_order_email
+		}, (error, info) => {
+			if (error) {
+				return console.log(error);
+			}
+			console.log("Message sent: %s", info.messageId);
+			return res.send(true);
 		});
 	}).catch((err) => {
 		return res.status(500).send(err.stack);

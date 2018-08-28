@@ -14,6 +14,10 @@ export class OrderComponent implements OnInit {
 	public buyer_index: number;
 	public seller_index: number;
 	inEditMode: boolean = false;
+	public forward: any = {
+	};
+	public last_forward: any = {
+	};
 	public order: any = {
 	};
 	public document: any = {
@@ -40,6 +44,14 @@ export class OrderComponent implements OnInit {
 		});
 		this.http.get("/api/documents/" + this.id).subscribe((val) => {
 			this.documents = val;
+			console.log("GET call successful value returned in body", val);
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+		this.http.get("/api/order/" + this.id + "/forward/recent").subscribe((val) => {
+			this.last_forward = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -145,5 +157,16 @@ export class OrderComponent implements OnInit {
 	}
 	download(id){
 		window.open("/api/document/" + id, '_self');
+	}
+	forwardSubmit(id){
+		this.http.post("/api/order/"+ id + "/forward", this.forward).subscribe((val) => {
+		$("#emailForwardModal").modal("hide");
+		$("#forwardSent").show();
+			console.log("PUT call successful value returned in body", val);
+		}, response => {
+			console.log("PUT call in error", response)
+		}, () => {
+			console.log("The PUT observable is now completed.");
+		});
 	}
 }
