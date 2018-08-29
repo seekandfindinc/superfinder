@@ -20,7 +20,6 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const fs = require("fs");
 const new_account_email = fs.readFileSync("email_templates/new_account_email.html", "utf8");
-const forward_order_email = fs.readFileSync("email_templates/forward_order_email.html", "utf8");
 const config = require("./config");
 const transporter = nodemailer.createTransport({
 	service: "gmail",
@@ -31,7 +30,7 @@ const transporter = nodemailer.createTransport({
 });
 
 http.createServer(function (req, res) {
-	var header = req.headers['host'];
+	var header = req.headers["host"];
 	res.writeHead(307, {
 		Location: header.search(":") > -1 ? "https://" + header.slice(0, header.search(":")) + ":" + config.ssl_port + req.url : "https://" + header + ":" + config.ssl_port + req.url
 	});
@@ -255,23 +254,75 @@ app.get("/api/order/:id/forward/recent", function(req, res){
 });
 
 app.post("/api/order/:id/forward", function(req, res){
-	models.OrderForward.create({
-		email: req.body.email,
-		subject: "New Order",
-		html: forward_order_email,
-		OrderId: req.params.id,
-	}).then((orderforward) => {
-		transporter.sendMail({
-			from: "team@seekandfindinc.com",
-			to: req.body.email,
-			subject: "New Order",
-			html: forward_order_email
-		}, (error, info) => {
-			if (error) {
-				return console.log(error);
-			}
-			console.log("Message sent: %s", info.messageId);
-			return res.send(true);
+	models.Order.find({
+		where:{
+			id: req.params.id
+		},
+		raw: true
+	}).then((order) => {
+		models.Buyer.findAll({
+			where:{
+				OrderId: req.params.id
+				
+			},
+			raw: true,
+			attributes: ["name", "address"]
+		}).then((buyers) => {
+			models.Seller.findAll({
+				where:{
+					OrderId: req.params.id
+				},
+				attributes: ["name", "address"],
+				raw: true
+			}).then((sellers) => {
+				order.buyers = buyers;
+				order.sellers = sellers;
+				var forward_order_email = fs.readFileSync("email_templates/forward_order_email.html", "utf8");
+				var buyersList = "";
+				lodash.forEach(order.buyers, function(value, key){
+					if(key === order.buyers.length - 1){
+						buyersList = buyersList + value.name;
+					}
+					else{
+						buyersList = buyersList + value.name + "<br>";
+					}
+				});
+				var sellersList = "";
+				lodash.forEach(order.sellers, function(value, key){
+					if(key === order.sellers.length - 1){
+						sellersList = sellersList + value.name;
+					}
+					else{
+						sellersList = sellersList + value.name + "<br>";
+					}
+				});
+				forward_order_email = forward_order_email.replace("[PROPERTY]", order.property_address).replace("[CORP]", order.corporation).replace("[PURCH]", "$" + order.purchase_price).replace("[LENDER]", order.lender ? order.lender : "NONE").replace("[LOAN]", order.loan_amount ? "$" + order.loan_amount : "NONE").replace("[BUYERS]", buyersList).replace("[SELLERS]", sellersList);
+				models.OrderForward.create({
+					email: req.body.email,
+					subject: "New Order",
+					html: forward_order_email,
+					OrderId: req.params.id,
+				}).then((orderforward) => {
+					transporter.sendMail({
+						from: "team@seekandfindinc.com",
+						to: req.body.email,
+						subject: "New Order",
+						html: forward_order_email
+					}, (error, info) => {
+						if (error) {
+							return console.log(error);
+						}
+						console.log("Message sent: %s", info.messageId);
+						return res.send(true);
+					});
+				}).catch((err) => {
+					return res.status(500).send(err.stack);
+				});
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		}).catch((err) => {
+			return res.status(500).send(err.stack);
 		});
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
