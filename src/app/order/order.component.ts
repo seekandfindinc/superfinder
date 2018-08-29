@@ -13,6 +13,7 @@ export class OrderComponent implements OnInit {
 	id: number;
 	public buyer_index: number;
 	public seller_index: number;
+	public invoices_item_index: number = 0;
 	inEditMode: boolean = false;
 	public forward: any = {
 	};
@@ -26,6 +27,11 @@ export class OrderComponent implements OnInit {
 	};
 	public documents: any = [
 	];
+	public invoices: any = [{
+			item: null,
+			unit: null,
+			cost: null
+	}];
 	constructor(private http: HttpClient, private route: ActivatedRoute) { }
 	ngOnInit() {
 		this.route.params.subscribe(params => {
@@ -168,5 +174,17 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The PUT observable is now completed.");
 		});
+	}
+	addItem() {
+		this.invoices.push({
+			item: null,
+			unit: null,
+			cost: null
+		});
+		this.invoices_item_index++;
+	}
+	deleteItem() {
+		this.invoices_item_index--;
+		this.invoices.splice(-1, 1);
 	}
 }
