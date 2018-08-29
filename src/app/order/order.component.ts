@@ -28,9 +28,9 @@ export class OrderComponent implements OnInit {
 	public documents: any = [
 	];
 	public invoices: any = [{
-			item: null,
-			unit: null,
-			cost: null
+		item: null,
+		unit: null,
+		cost: null
 	}];
 	constructor(private http: HttpClient, private route: ActivatedRoute) { }
 	ngOnInit() {
@@ -166,8 +166,8 @@ export class OrderComponent implements OnInit {
 	}
 	forwardSubmit(id){
 		this.http.post("/api/order/"+ id + "/forward", this.forward).subscribe((val) => {
-		$("#emailForwardModal").modal("hide");
-		$("#forwardSent").show();
+			$("#emailForwardModal").modal("hide");
+			$("#forwardSent").show();
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
@@ -186,5 +186,16 @@ export class OrderComponent implements OnInit {
 	deleteItem() {
 		this.invoices_item_index--;
 		this.invoices.splice(-1, 1);
+	}
+	invoiceSubmit(id){
+		this.http.post("/api/invoice/"+ id, this.invoices).subscribe((val) => {
+			$("#generateInvoiceModal").modal("hide");
+			$("#invoiceGenerated").show();
+			console.log("PUT call successful value returned in body", val);
+		}, response => {
+			console.log("PUT call in error", response)
+		}, () => {
+			console.log("The PUT observable is now completed.");
+		});
 	}
 }

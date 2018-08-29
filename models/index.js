@@ -126,10 +126,54 @@ const OrderForward = sequelize.define("OrderForward", {
 	paranoid: true
 });
 
+const Invoice = sequelize.define("Invoice", {
+	payed_date:{
+		type: Sequelize.DATE,
+		allowNull: true
+	},
+	sub_total:{
+		type: Sequelize.FLOAT,
+		allowNull: false
+	},
+	sales_tax:{
+		type: Sequelize.FLOAT,
+		allowNull: false
+	},
+	total:{
+		type: Sequelize.FLOAT,
+		allowNull: false
+	}
+},{
+	paranoid: true
+});
+
+const InvoiceItem = sequelize.define("InvoiceItem", {
+	item:{
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	unit:{
+		type: Sequelize.INTEGER,
+		allowNull: false
+	},
+	cost:{
+		type: Sequelize.FLOAT,
+		allowNull: false
+	},
+	total_cost:{
+		type: Sequelize.FLOAT,
+		allowNull: false
+	}
+},{
+	paranoid: true
+});
+
 Order.hasMany(Buyer);
 Order.hasMany(Seller);
 Order.hasMany(Document);
 Order.hasMany(OrderForward);
+Order.hasMany(Invoice);
+Invoice.hasMany(InvoiceItem);
 
 sequelize.sync()
 
@@ -139,3 +183,5 @@ module.exports["Buyer"] = Buyer;
 module.exports["Seller"] = Seller;
 module.exports["Document"] = Document;
 module.exports["OrderForward"] = OrderForward;
+module.exports["Invoice"] = Invoice;
+module.exports["InvoiceItem"] = InvoiceItem;

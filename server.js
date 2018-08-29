@@ -377,6 +377,33 @@ app.post("/api/document", upload.single("file"), function(req, res){
 	});
 });
 
+app.post("/api/invoice/:orderid", function(req, res){
+	var items = req.body;
+	var total_cost = 0;
+	lodash.forEach(items, function(order){
+		order.total_cost = order.unit * order.cost; 
+		total_cost = total_cost + order.total_cost;
+	});
+	var total_cost_with_tax = total_cost * .08875;
+	models.Invoice.create({
+		sub_total: total_cost,
+		sales_tax: total_cost_with_tax,
+		total: total_cost + total_cost_with_tax,
+		OrderId: req.params.orderid
+	}).then((invoice) => {
+		lodash.forEach(items, function(order){
+			order.InvoiceId = invoice.id
+		});
+		models.InvoiceItem.bulkCreate(items).then((invoice_item) => {
+			res.send(true);
+		}).catch((err) => {
+			return res.status(500).send(err.stack);
+		});	
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
 });

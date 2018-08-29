@@ -17,6 +17,12 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
+			<div class="alert alert-info collapse" role="alert" id="invoiceGenerated">
+				Invoice Generated (Check Documents)
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
 			<div class="row">
 				<div class="col">
 					<div class="font-weight-bold">Property</div>
@@ -323,6 +329,9 @@
 									<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addItem()">Add Item</button>
 									<button type="button" [disabled]="invoices_item_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteItem()">Remove Item</button>
 								</td>
+							</tr>
+							<tr>
+								<td class="text-center" colspan="3"><i>All items are subject to NYS Sales Tax (8.875%)</i></td>
 							</tr>
 						</tfoot>
 					</table>
