@@ -48,16 +48,22 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The GET observable is now completed.");
 		});
-		this.http.get("/api/documents/" + this.id).subscribe((val) => {
-			this.documents = val;
+		this.getDocuments();
+		this.getLastForward();
+	}
+	getLastForward(){
+		this.http.get("/api/order/" + this.id + "/forward/recent").subscribe((val) => {
+			this.last_forward = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
 		}, () => {
 			console.log("The GET observable is now completed.");
 		});
-		this.http.get("/api/order/" + this.id + "/forward/recent").subscribe((val) => {
-			this.last_forward = val;
+	}
+	getDocuments(){
+		this.http.get("/api/documents/" + this.id).subscribe((val) => {
+			this.documents = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -168,6 +174,7 @@ export class OrderComponent implements OnInit {
 		this.http.post("/api/order/"+ id + "/forward", this.forward).subscribe((val) => {
 			$("#emailForwardModal").modal("hide");
 			$("#forwardSent").show();
+			this.getLastForward();
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
@@ -191,6 +198,7 @@ export class OrderComponent implements OnInit {
 		this.http.post("/api/invoice/"+ id, this.invoices).subscribe((val) => {
 			$("#generateInvoiceModal").modal("hide");
 			$("#invoiceGenerated").show();
+			this.getDocuments();
 			console.log("PUT call successful value returned in body", val);
 		}, response => {
 			console.log("PUT call in error", response)
