@@ -142,7 +142,11 @@ const Invoice = sequelize.define("Invoice", {
 	total:{
 		type: Sequelize.FLOAT,
 		allowNull: false
-	}
+	},
+	number:{
+		type: Sequelize.STRING,
+		allowNull: true
+	},
 },{
 	paranoid: true
 });
@@ -174,6 +178,7 @@ Order.hasMany(Document);
 Order.hasMany(OrderForward);
 Order.hasMany(Invoice);
 Invoice.hasMany(InvoiceItem);
+Document.hasOne(Invoice);
 
 sequelize.sync()
 
