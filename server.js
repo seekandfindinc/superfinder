@@ -381,9 +381,9 @@ app.post("/api/document", upload.single("file"), function(req, res){
 app.post("/api/invoice/:orderid", function(req, res){
 	var items = req.body;
 	var total_cost = 0;
-	lodash.forEach(items, function(order){
-		order.total_cost = order.unit * order.cost; 
-		total_cost = total_cost + order.total_cost;
+	lodash.forEach(items, function(item){
+		item.total_cost = item.unit * item.cost; 
+		total_cost = total_cost + item.total_cost;
 	});
 	var total_cost_with_tax = total_cost * .08875;
 	models.Invoice.create({
@@ -394,180 +394,201 @@ app.post("/api/invoice/:orderid", function(req, res){
 	}).then((invoice) => {
 		var random_number = chance.integer({ min: 100000, max: 999999 });
 		var invoice_number = invoice.id + "-" + random_number;
-		lodash.forEach(items, function(order){
-			order.InvoiceId = invoice.id
+		lodash.forEach(items, function(item){
+			item.InvoiceId = invoice.id
 		});
 		models.InvoiceItem.bulkCreate(items).then((invoice_item) => {
-			models.Buyer.findAll({
+			models.Order.find({
 				where:{
-					OrderId: invoice.OrderId
+					id: invoice.OrderId
 				},
 				raw: true
-			}).then((buyers) => {
-				var table_body = [
-					[{
-						text: "Unit(s)",
-						style: "tableheader"
-					},{
-						text: "Description",
-						style: "tableheader"
-					},{
-						text: "Unit Price",
-						style: "tableheader"
-					},{
-						text: "Total Price",
-						style: "tableheader"
-					}]
-				];
-				lodash.forEach(items, function(item){
-					var items_array = [{
-						text: item.unit,
-						alignment: "right"
-					},item.item,{
-						text: item.cost.toFixed(2),
-						alignment: "right"
-					},{
-						text: item.total_cost.toFixed(2),
-						alignment: "right"
-					}];
-					table_body.push(items_array)
-				});
-				table_body.push([{
-					text: "Subtotal",
-					colSpan: 3,
-					style: "tablefooter"
-				},"","", {
-					text: invoice.sub_total.toFixed(2),
-					alignment: "right"
-				}]);
-				table_body.push([{
-					text: "Sales Tax",
-					colSpan: 3,
-					style: "tablefooter"
-				},"","", {
-					text: invoice.sales_tax.toFixed(2),
-					alignment: "right"
-				}]);
-				table_body.push([{
-					text: "Total",
-					colSpan: 3,
-					style: "tablefooter"
-				},"","", {
-					text: invoice.total.toFixed(2),
-					alignment: "right"
-				}]);
-				var pdf_content = {
-					content: [{
-						text: "Seek and Find Inc.",
-						style: {
-						    fontSize: 22
-						}
-					},' ',{
-						text: "1051 Port Washington Boulevard",
-						style: "address"
-					},{
-						text: "PO Box 1313",
-						style: "address"
-					},{
-						text: "Port Washington, NY 11050",
-						style: "address"
-					},{
-						text: "Tel: 631-406-9427",
-						style: "address"
-					}," ",{
-						text: "Invoice Number",
-						style: {
-							fontSize: 10,
-							bold: true,
-							decoration: "underline"
-						}
-					},{
-						text: invoice.id + "-" + random_number,
-						style: {
-							fontSize: 10,
-						}
-					}," ",{
-						text: "Buyers",
-						style: {
-							fontSize: 10,
-							bold: true,
-							decoration: "underline"
-						}
-					},{
-						text: lodash.map(buyers, "name").join(", "),
-						style: {
-							fontSize: 10,
-						}
-					}," ",{
-						table: {
-						    widths: ["10%", "50%", "20%", "20%"],
-							body: table_body
-							
-						},
-						style: "table"
-					}," ",{
-						text: "Make all checks payable to Seek and Find Inc",
-						style: {
-							fontSize: 10,
-							italics: true
-						}
-					}],
-					styles: {
-						address:{
-							fontSize: 10,
-							italics: true
-						},
-						table:{
-						    fontSize: 9
-						},
-						tableheader:{
-						    bold: true,
-						    alignment: "center"
-						},
-						tablefooter:{
-						    bold: true,
-						    alignment: "right"
-						}
-					}
-				};
-				const doc = new pdfmake({
-					Roboto:{
-						normal: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Regular.ttf"], "base64"),
-						italics: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Italic.ttf"], "base64"),
-						bold: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Medium.ttf"], "base64")
-					}
-				}).createPdfKitDocument(pdf_content);
-				var chunks = [];
-				var result;
-				doc.on("readable", function(){
-					var chunk;
-					while ((chunk = doc.read(9007199254740991)) !== null){
-						chunks.push(chunk);
-					}
-				});
-				doc.on("end", function(){
-					result = Buffer.concat(chunks);
-					models.Document.create({
-						filename: "Invoice_" + moment().format("YYYYMMDD") + ".pdf",
-						description: "Invoice",
-						file: result,
+			}).then((order) => {
+				models.Buyer.findAll({
+					where:{
 						OrderId: invoice.OrderId
-					}).then((document) => {
-						models.Invoice.update({
-							number: invoice_number,
-							DocumentId: document.id
+					},
+					raw: true
+				}).then((buyers) => {
+					var table_body = [
+						[{
+							text: "Unit(s)",
+							style: "tableheader"
 						},{
-							where:{
-								id: invoice.id
-							}
-						}).then(() => {
-							return res.send(true);
-						});
-					}).catch((err) => {
-						return res.status(500).send(err.stack);
+							text: "Description",
+							style: "tableheader"
+						},{
+							text: "Unit Price",
+							style: "tableheader"
+						},{
+							text: "Total Price",
+							style: "tableheader"
+						}]
+					];
+					lodash.forEach(items, function(item){
+						var items_array = [{
+							text: item.unit,
+							alignment: "right"
+						},item.item,{
+							text: item.cost.toFixed(2),
+							alignment: "right"
+						},{
+							text: item.total_cost.toFixed(2),
+							alignment: "right"
+						}];
+						table_body.push(items_array)
 					});
+					table_body.push([{
+						text: "Subtotal",
+						colSpan: 3,
+						style: "tablefooter"
+					},"","", {
+						text: invoice.sub_total.toFixed(2),
+						alignment: "right"
+					}]);
+					table_body.push([{
+						text: "Sales Tax",
+						colSpan: 3,
+						style: "tablefooter"
+					},"","", {
+						text: invoice.sales_tax.toFixed(2),
+						alignment: "right"
+					}]);
+					table_body.push([{
+						text: "Total",
+						colSpan: 3,
+						style: "tablefooter"
+					},"","", {
+						text: invoice.total.toFixed(2),
+						alignment: "right"
+					}]);
+					var pdf_content = {
+						content: [{
+							text: "Seek and Find Inc.",
+							style: {
+							    fontSize: 22
+							}
+						},' ',{
+							text: "1051 Port Washington Boulevard",
+							style: "address"
+						},{
+							text: "PO Box 1313",
+							style: "address"
+						},{
+							text: "Port Washington, NY 11050",
+							style: "address"
+						},{
+							text: "Tel: 631-406-9427",
+							style: "address"
+						}," ",{
+							text: "Invoice Number",
+							style: {
+								fontSize: 10,
+								bold: true,
+								decoration: "underline"
+							}
+						},{
+							text: invoice.id + "-" + random_number,
+							style: {
+								fontSize: 10,
+							}
+						}," ",{
+							text: "Search Reference Number",
+							style: {
+								fontSize: 10,
+								bold: true,
+								decoration: "underline"
+							}
+						},{
+							text: order.reference_number,
+							style: {
+								fontSize: 10,
+							}
+						}," ",{
+							text: "Buyers",
+							style: {
+								fontSize: 10,
+								bold: true,
+								decoration: "underline"
+							}
+						},{
+							text: lodash.map(buyers, "name").join(", "),
+							style: {
+								fontSize: 10,
+							}
+						}," ",{
+							table: {
+							    widths: ["10%", "50%", "20%", "20%"],
+								body: table_body
+								
+							},
+							style: "table"
+						}," ",{
+							text: "Make all checks payable to Seek and Find Inc",
+							style: {
+								fontSize: 10,
+								italics: true
+							}
+						}],
+						styles: {
+							address:{
+								fontSize: 10,
+								italics: true
+							},
+							table:{
+							    fontSize: 9
+							},
+							tableheader:{
+							    bold: true,
+							    alignment: "center"
+							},
+							tablefooter:{
+							    bold: true,
+							    alignment: "right"
+							}
+						}
+					};
+					const doc = new pdfmake({
+						Roboto:{
+							normal: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Regular.ttf"], "base64"),
+							italics: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Italic.ttf"], "base64"),
+							bold: new Buffer(require("pdfmake/build/vfs_fonts.js").pdfMake.vfs["Roboto-Medium.ttf"], "base64")
+						}
+					}).createPdfKitDocument(pdf_content);
+					var chunks = [];
+					var result;
+					doc.on("readable", function(){
+						var chunk;
+						while ((chunk = doc.read(9007199254740991)) !== null){
+							chunks.push(chunk);
+						}
+					});
+					doc.on("end", function(){
+						result = Buffer.concat(chunks);
+						models.Document.create({
+							filename: "Invoice_" + moment().format("YYYYMMDD") + ".pdf",
+							description: "Invoice",
+							file: result,
+							OrderId: invoice.OrderId
+						}).then((document) => {
+							models.Invoice.update({
+								number: invoice_number,
+								DocumentId: document.id
+							},{
+								where:{
+									id: invoice.id
+								}
+							}).then(() => {
+								return res.send(true);
+							});
+						}).catch((err) => {
+							return res.status(500).send(err.stack);
+						});
+					});
+					doc.end();
+				}).catch((err) => {
+					return res.status(500).send(err.stack);
 				});
-				doc.end();
 			}).catch((err) => {
 				return res.status(500).send(err.stack);
 			});
