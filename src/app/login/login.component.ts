@@ -10,6 +10,7 @@ import { Router } from "@angular/router";
 export class LoginComponent implements OnInit {
 	public login_email: string;
 	public register_email: string;
+	public forgot_email: string;
 	public password: string;
 	constructor(private http: HttpClient, private router: Router) { }
 	ngOnInit() {
@@ -40,6 +41,22 @@ export class LoginComponent implements OnInit {
 			}
 			else{
 				alert("Try again. Invalid Login");
+			}
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+	}
+	forgotSubmit(){
+		this.http.post("/api/user/forgot", {
+			email: this.forgot_email
+		}).subscribe((val) => {
+			console.log("GET call successful value returned in body", val);
+			if(val){
+				//show reset message bruh
+				// localStorage.setItem("currentUser", JSON.stringify(val));
+				// this.router.navigate(["/admin/dashboard"]);
 			}
 		}, response => {
 			console.log("GET call in error", response);

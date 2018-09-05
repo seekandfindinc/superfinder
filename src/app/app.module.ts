@@ -13,6 +13,7 @@ import { SearchPipe } from './search.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from "jquery";
 import * as bootstrap from "bootstrap";
+import { ForgotComponent } from './forgot/forgot.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -26,6 +27,9 @@ const appRoutes: Routes = [{
 	component: OrderComponent,
 	canActivate: [AuthGuard]
 },{
+	path: "admin/user/forgot",
+	component: ForgotComponent
+},{
 	path: "",
 	redirectTo: "/admin",
 	pathMatch: "full"
@@ -38,7 +42,8 @@ const appRoutes: Routes = [{
 		LoginComponent,
 		OrderComponent,
 		NavbarComponent,
-		SearchPipe
+		SearchPipe,
+		ForgotComponent
 	],
 	imports: [
 		BrowserModule,
