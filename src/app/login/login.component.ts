@@ -8,10 +8,10 @@ import { Router } from "@angular/router";
 	styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-	public login_email: string;
-	public register_email: string;
-	public forgot_email: string;
-	public password: string;
+	login_email: string;
+	register_email: string;
+	forgot_email: string;
+	password: string;
 	constructor(private http: HttpClient, private router: Router) { }
 	ngOnInit() {
 	}
@@ -54,9 +54,7 @@ export class LoginComponent implements OnInit {
 		}).subscribe((val) => {
 			console.log("GET call successful value returned in body", val);
 			if(val){
-				//show reset message bruh
-				// localStorage.setItem("currentUser", JSON.stringify(val));
-				// this.router.navigate(["/admin/dashboard"]);
+				alert("If you email is valid then a reset link will be sent.");
 			}
 		}, response => {
 			console.log("GET call in error", response);
