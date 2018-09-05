@@ -19,7 +19,6 @@ const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const fs = require("fs");
-const new_account_email = fs.readFileSync("email_templates/new_account_email.html", "utf8");
 const config = require("./config");
 const transporter = nodemailer.createTransport({
 	service: "gmail",
@@ -85,9 +84,148 @@ app.get("/api/user", [
 	});
 });
 
+app.put("/api/user", function(req, res){
+	models.User.find({
+		where:{
+			id: req.body.id
+		},
+		raw: true
+	}).then((user) => {
+		if(user){
+			models.User.update({
+				password: bcrypt.hashSync(req.body.password, 10)
+			},{
+				where:{
+					id: req.body.id
+				}
+			}).then((user) => {
+				res.send(true);
+			}).catch((err) => {
+				res.status(500).send(err.stack);
+			});
+		}
+		else{
+			res.send(true);
+		}
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/user/forgot/:hash", function(req, res){
+	const password_reset_step2_email = fs.readFileSync("email_templates/password_reset_step2_email.html", "utf8");
+	models.UserPasswordReset.find({
+		where:{
+			hash: req.params.hash,
+			used: false,
+			expire_date:{
+				$gte: moment().format("YYYY-MM-DD HH:mm:ss")
+			}
+		},
+		raw: true
+	}).then((password_reset) => {
+		if(password_reset){
+			var password = chance.word({length: 12});
+			models.User.update({
+				password: bcrypt.hashSync(password, 10)
+			},{
+				where:{
+					id: password_reset.UserId
+				}
+			}).then((user) => {
+				models.User.find({
+					where:{
+						id: password_reset.UserId
+					},
+					raw: true
+				}).then((user) => {
+					models.UserPasswordReset.update({
+						used: true
+					},{
+						where:{
+							id: password_reset.id
+						}
+					}).then((password_reset) => {
+						transporter.sendMail({
+							from: "team@seekandfindinc.com",
+							to: user.email,
+							subject: "Reset Password",
+							html: password_reset_step2_email.replace("[NEW_PASSWORD]", password).replace("[LOGIN_URL]", config.email_domain)
+						}, (error, info) => {
+							if (error) {
+								return console.log(error);
+							}
+							console.log("Message sent: %s", info.messageId);
+							return res.redirect(config.email_domain + "/admin/user/forgot?status=s")
+						});
+					}).catch((err) => {
+						return res.status(500).send(err.stack);
+					});
+				}).catch((err) => {
+					return res.status(500).send(err.stack);
+				});
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		}
+		else{
+			return res.redirect(config.email_domain + "/admin/user/forgot?status=f")
+		}
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.post("/api/user/forgot", [
+	check("email").isEmail()
+], function(req, res){
+	const password_reset_step1_email = fs.readFileSync("email_templates/password_reset_step1_email.html", "utf8");
+	const errors = validationResult(req);
+	if(!errors.isEmpty()){
+		return res.status(422).json({ errors: errors.array() });
+	};
+	models.User.find({
+		where:{
+			email: req.body.email
+		},
+		raw: true
+	}).then((user) => {
+		if(user){
+			var hash = chance.string({ length: 50, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789' });
+			var expire_date = moment().add(24, "hours").format("YYYY-MM-DD HH:mm:ss");
+			models.UserPasswordReset.create({
+				expire_date: expire_date,
+				hash: hash,
+				UserId: user.id
+			}).then((password_reset) => {
+				transporter.sendMail({
+					from: "team@seekandfindinc.com",
+					to: req.body.email,
+					subject: "Reset Password",
+					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash)
+				}, (error, info) => {
+					if (error) {
+						return console.log(error);
+					}
+					console.log("Message sent: %s", info.messageId);
+					return res.send(true);
+				});
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		}
+		else{
+			return res.send(true);
+		}
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
 app.post("/api/register", [
 	check("email").isEmail()
 ], function(req, res){
+	const new_account_email = fs.readFileSync("email_templates/new_account_email.html", "utf8");
 	const errors = validationResult(req);
 	if(!errors.isEmpty()){
 		return res.status(422).json({ errors: errors.array() });

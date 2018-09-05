@@ -3,6 +3,39 @@
 		<li class="breadcrumb-item" *ngIf="!isOrder">Orders</li>
 		<li class="breadcrumb-item" *ngIf="isOrder"><a routerLink="/admin/dashboard">Orders</a></li>
 		<li class="breadcrumb-item active" *ngIf="isOrder">Order</li>
-		<li class="ml-auto"><a routerLink="#" (click)="logout()">Sign Out</a></li>
+		<li class="ml-auto">
+			<a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User</a>
+			<div class="dropdown-menu" aria-labelledby="userDropdown">
+				<a class="dropdown-item" data-toggle="modal" data-target="#resetPasswordModal">Reset Password</a>
+				<a class="dropdown-item" routerLink="#" (click)="logout()">Sign Out</a>
+			</div>
+		</li>
 	</ol>
 </nav>
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<form class="was-validated" (ngSubmit)="savePassword()" #resetPasswordForm="ngForm">
+				<div class="modal-header">
+					<h5 class="modal-title">Reset New Password</h5>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Password</label>
+						<input type="password" class="form-control form-control-sm" required [(ngModel)]="new_password" name="new_password">
+						<div class="invalid-feedback">Enter new password</div>
+					</div>
+					<div class="form-group">
+						<label>Confirm Password</label>
+						<input type="password" class="form-control form-control-sm" required [(ngModel)]="new_password_confirm" name="new_password_confirm">
+						<div class="invalid-feedback">Enter new password</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" [disabled]="resetPasswordForm.form.invalid">Send</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

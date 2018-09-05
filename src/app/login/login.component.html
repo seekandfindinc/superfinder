@@ -1,25 +1,19 @@
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 <div class="container">
 	<div class="row">
-		<div class="col-lg-4"></div>
+		<div class="col-lg-3"></div>
 		<div class="col">
 			<div class="card text-center">
 				<div class="card-header">
-					<ul class="nav nav-pills card-header-pills nav-fill" role="tablist">
+					<ul class="nav nav-pills card-header-pills nav-fill nav-justified" role="tablist">
 						<li class="nav-item">
 							<a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="false">Login</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" id="register-tab" data-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="true">Register</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="forgot-tab" data-toggle="tab" href="#forgot" role="tab" aria-controls="forgot" aria-selected="true">Forgot Password</a>
 						</li>
 					</ul>
 				</div>
@@ -50,10 +44,20 @@
 								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="newUserForm.form.invalid">Register</button>
 							</form>
 						</div>
+						<div class="tab-pane fade" id="forgot" role="tabpanel" aria-labelledby="forgot-tab">
+							<form class="was-validated" (ngSubmit)="forgotSubmit()" #forgotForm="ngForm">
+								<div class="form-group">
+									<label>Seek and Find Email</label>
+									<input type="email" class="form-control form-control-sm" required [(ngModel)]="forgot_email" name="forgot_email" email>
+									<div class="invalid-feedback">Enter valid email</div>
+								</div>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="forgotForm.form.invalid">Reset</button>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-lg-4"></div>
+		<div class="col-lg-3"></div>
 	</div>
 </div>

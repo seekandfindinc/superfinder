@@ -8,9 +8,10 @@ import { Router } from "@angular/router";
 	styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-	public login_email: string;
-	public register_email: string;
-	public password: string;
+	login_email: string;
+	register_email: string;
+	forgot_email: string;
+	password: string;
 	constructor(private http: HttpClient, private router: Router) { }
 	ngOnInit() {
 	}
@@ -40,6 +41,20 @@ export class LoginComponent implements OnInit {
 			}
 			else{
 				alert("Try again. Invalid Login");
+			}
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+	}
+	forgotSubmit(){
+		this.http.post("/api/user/forgot", {
+			email: this.forgot_email
+		}).subscribe((val) => {
+			console.log("GET call successful value returned in body", val);
+			if(val){
+				alert("If you email is valid then a reset link will be sent.");
 			}
 		}, response => {
 			console.log("GET call in error", response);
