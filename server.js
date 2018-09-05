@@ -84,6 +84,34 @@ app.get("/api/user", [
 	});
 });
 
+app.put("/api/user", function(req, res){
+	models.User.find({
+		where:{
+			id: req.body.id
+		},
+		raw: true
+	}).then((user) => {
+		if(user){
+			models.User.update({
+				password: bcrypt.hashSync(req.body.password, 10)
+			},{
+				where:{
+					id: req.body.id
+				}
+			}).then((user) => {
+				res.send(true);
+			}).catch((err) => {
+				res.status(500).send(err.stack);
+			});
+		}
+		else{
+			res.send(true);
+		}
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
 app.get("/api/user/forgot/:hash", function(req, res){
 	const password_reset_step2_email = fs.readFileSync("email_templates/password_reset_step2_email.html", "utf8");
 	models.UserPasswordReset.find({
