@@ -172,6 +172,24 @@ const InvoiceItem = sequelize.define("InvoiceItem", {
 	paranoid: true
 });
 
+const UserPasswordReset = sequelize.define("UserPasswordReset", {
+	expire_date:{
+		type: Sequelize.DATE,
+		allowNull: true
+	},
+	hash: {
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	used:{
+		type: Sequelize.BOOLEAN,
+		allowNull: false,
+		defaultValue: false
+	}
+},{
+	paranoid: true
+});
+
 Order.hasMany(Buyer);
 Order.hasMany(Seller);
 Order.hasMany(Document);
@@ -179,10 +197,12 @@ Order.hasMany(OrderForward);
 Order.hasMany(Invoice);
 Invoice.hasMany(InvoiceItem);
 Document.hasOne(Invoice);
+User.hasMany(UserPasswordReset);
 
 sequelize.sync()
 
 module.exports["User"] = User;
+module.exports["UserPasswordReset"] = UserPasswordReset;
 module.exports["Order"] = Order;
 module.exports["Buyer"] = Buyer;
 module.exports["Seller"] = Seller;

@@ -10,7 +10,8 @@ var config = {
 	no_ssl_port: 80,
 	cert: fs.readFileSync("cert.pem"),
 	key: fs.readFileSync("key.pem"),
-	web_host: "localhost"
+	web_host: "localhost",
+	email_domain: "http://localhost:4200/"
 };
 
 module.exports = config;
