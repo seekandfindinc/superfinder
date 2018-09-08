@@ -378,15 +378,15 @@ app.post("/api/order", function(req, res){
 	});
 });
 
-app.get("/api/order/:id/forward/recent", function(req, res){
-	models.OrderForward.find({
+app.get("/api/order/:id/forwards", function(req, res){
+	models.OrderForward.findAll({
 		where:{
 			OrderId: req.params.id
 		},
 		raw: true,
 		order:[["createdAt", "DESC"]]
-	}).then((orderforward) => {
-		res.send(orderforward);
+	}).then((orderforwards) => {
+		res.send(orderforwards);
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});

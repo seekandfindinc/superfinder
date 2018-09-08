@@ -3,6 +3,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
 import * as moment from "moment";
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
 	selector: 'app-order',
@@ -17,8 +18,7 @@ export class OrderComponent implements OnInit {
 	inEditMode: boolean = false;
 	public forward: any = {
 	};
-	public last_forward: any = {
-	};
+	public forwards: any = [];
 	public order: any = {
 	};
 	public document: any = {
@@ -32,8 +32,8 @@ export class OrderComponent implements OnInit {
 		unit: null,
 		cost: null
 	}];
-	constructor(private http: HttpClient, private route: ActivatedRoute) { }
-	ngOnInit() {
+	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) { }
+	ngOnInit(){
 		this.route.params.subscribe(params => {
 			this.id = +params.orderid;
 		});
@@ -52,8 +52,8 @@ export class OrderComponent implements OnInit {
 		this.getLastForward();
 	}
 	getLastForward(){
-		this.http.get("/api/order/" + this.id + "/forward/recent").subscribe((val) => {
-			this.last_forward = val;
+		this.http.get("/api/order/" + this.id + "/forwards").subscribe((val) => {
+			this.forwards = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -72,14 +72,18 @@ export class OrderComponent implements OnInit {
 		});
 	}
 	closeOrder(id){
+		this.spinner.show();
 		this.http.put("/api/order/" + this.id,{
 			closed: true,
 			closed_date: moment().format("YYYY-MM-DD HH:mm:ss")
 		}).subscribe((val) => {
-			this.order.closed = true;
-			$("#confirmModal").modal("hide");
-			this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
 			console.log("PUT call successful value returned in body", val);
+			$("#confirmModal").modal("hide");
+			setTimeout(() => {
+				this.order.closed = true;
+				this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
+				this.spinner.hide();
+			}, 2000);
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
@@ -103,6 +107,7 @@ export class OrderComponent implements OnInit {
 		}
 	}
 	saveOrder(){
+		this.spinner.show();
 		if(this.temp_closing_date.date){
 			this.order.closing_date = moment({
 				year: this.temp_closing_date.date.year,
@@ -113,11 +118,12 @@ export class OrderComponent implements OnInit {
 			}).format("YYYY-MM-DD HH:mm:ss");
 		}
 		this.http.put("/api/order/" + this.id, this.order).subscribe((val) => {
-			if(val){
-				this.inEditMode = false;
-			}
-			this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
 			console.log("PUT call successful value returned in body", val);
+			setTimeout(() => {
+				this.inEditMode = false;
+				this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
+				this.spinner.hide();
+			}, 2000);
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
@@ -153,14 +159,18 @@ export class OrderComponent implements OnInit {
 		}
 	}
 	docSubmit(id){
+		this.spinner.show();
 		let formData = new FormData();
 		formData.append("description", this.document.description);
 		formData.append("file", this.document.file);
 		formData.append("OrderId", id);
 		this.http.post("/api/document/", formData).subscribe((val) => {
-			$("#newDocumentModal").modal("hide");
-			this.ngOnInit();
 			console.log("PUT call successful value returned in body", val);
+			$("#newDocumentModal").modal("hide");
+			setTimeout(() => {
+				this.getDocuments();
+				this.spinner.hide();
+			}, 2000);			
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
@@ -171,11 +181,15 @@ export class OrderComponent implements OnInit {
 		window.open("/api/document/" + id, '_self');
 	}
 	forwardSubmit(id){
+		this.spinner.show();
 		this.http.post("/api/order/"+ id + "/forward", this.forward).subscribe((val) => {
-			$("#emailForwardModal").modal("hide");
-			$("#forwardSent").show();
-			this.getLastForward();
 			console.log("PUT call successful value returned in body", val);
+			$("#emailForwardModal").modal("hide");
+			setTimeout(() => {
+				this.spinner.hide();
+				this.getLastForward();
+				$("#forwardSent").show();
+			}, 2000);
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
@@ -195,11 +209,15 @@ export class OrderComponent implements OnInit {
 		this.invoices.splice(-1, 1);
 	}
 	invoiceSubmit(id){
+		this.spinner.show();
 		this.http.post("/api/invoice/"+ id, this.invoices).subscribe((val) => {
-			$("#generateInvoiceModal").modal("hide");
-			$("#invoiceGenerated").show();
-			this.getDocuments();
 			console.log("PUT call successful value returned in body", val);
+			$("#generateInvoiceModal").modal("hide");
+			setTimeout(() => {
+				this.spinner.hide();
+				this.getDocuments();
+				$("#invoiceGenerated").show();
+			}, 2000);			
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
