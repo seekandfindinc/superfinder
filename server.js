@@ -27,7 +27,8 @@ const transporter = nodemailer.createTransport({
 		pass: config.email_password
 	}
 });
-var pdfmake = require("pdfmake");
+const pdfmake = require("pdfmake");
+const Sequelize = require("sequelize");
 
 http.createServer(function (req, res) {
 	var header = req.headers["host"];
@@ -69,7 +70,8 @@ app.get("/api/user", [
 			if(bcrypt.compareSync(req.query.password, user.password)){
 				res.send({
 					id: user.id,
-					email: user.email
+					email: user.email,
+					initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
 				});
 			}
 			else{
@@ -233,7 +235,9 @@ app.post("/api/register", [
 	var password = chance.word({length: 12});
 	models.User.create({
 		email: req.body.email,
-		password: bcrypt.hashSync(password, 10)
+		password: bcrypt.hashSync(password, 10),
+		first_name: req.body.first_name,
+		last_name: req.body.last_name
 	}).then((user) => {
 		transporter.sendMail({
 			from: "team@seekandfindinc.com",
@@ -373,6 +377,39 @@ app.post("/api/order", function(req, res){
 		}).catch((err) => {
 			return res.status(500).send(err.stack);
 		});
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/order/:id/notes", function(req, res){
+	models.Note.belongsTo(models.User, {foreignKey: "UserId", targetKey: "id"}); 
+	models.Note.findAll({
+		where:{
+			OrderId: req.params.id
+		},
+		raw: true,
+		order:[["createdAt", "ASC"]],
+		nest: true,
+		include:[{
+			model: models.User,
+			attributes: [[Sequelize.literal("CONCAT(UPPER(SUBSTRING(first_name, 1, 1)), UPPER(SUBSTRING(last_name, 1, 1)))"), "initials"]]
+
+		}]
+	}).then((notes) => {
+		res.send(notes);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.post("/api/order/:id/note", function(req, res){
+	models.Note.create({
+		text: req.body.text,
+		UserId: req.body.UserId,
+		OrderId: req.params.id
+	}).then((note) => {
+		return res.send(true);
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
 	});

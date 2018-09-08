@@ -17,13 +17,16 @@
 		<div class="card-header">
 			<ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
 				<li class="nav-item">
-					<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info" aria-selected="true">File</a>
+					<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info">File</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents" aria-selected="false">Documents</a>
+					<a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents">Documents</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" id="forwards-tab" data-toggle="tab" href="#forwards" role="tab" aria-controls="forwards" aria-selected="false">Forwards</a>
+					<a class="nav-link" id="forwards-tab" data-toggle="tab" href="#forwards" role="tab" aria-controls="forwards">Forwards</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes">Notes</a>
 				</li>
 			</ul>
 		</div>
@@ -247,6 +250,38 @@
 							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+					<div class="alert alert-chat" role="alert">
+						<div class="row scrollable" #noteList *ngIf="notes.length > 0">
+							<ul class="list-unstyled" style="width:100%">
+								<span *ngFor="let note of notes; index as i;">
+									<li class="media" >
+										<div class="rounded-circle box mr-3">
+											<div class="box-text">{{note.User.initials}}</div>
+										</div>
+										<div class="media-body note">
+											<div class="note-text">{{note.text}}</div>
+										</div>
+									</li>
+									<hr *ngIf="notes.length > 1 && (i < notes.length - 1) ">
+								</span>
+							</ul>
+						</div>
+						<div class="row scrollable" *ngIf="notes.length === 0">No Notes have been added to this order yet.</div>
+					</div> 
+					<div class="row" *ngIf="!order.closed">
+						<div class="col">
+							<form class="was-validated" #newMessageForm="ngForm" (ngSubmit)="newMessage(order.id)">
+								<div class="input-group mb-3">
+									<input type="text" class="form-control" placeholder="Note" name="text" [(ngModel)]="note.text" required>
+									<div class="input-group-append">
+										<button class="btn btn-outline-dark" type="submit" [disabled]="newMessageForm.form.invalid">Add</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

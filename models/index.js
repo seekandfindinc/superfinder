@@ -19,6 +19,14 @@ const User = sequelize.define("User", {
 		type: Sequelize.BOOLEAN,
 		allowNull: false,
 		defaultValue: false
+	},
+	first_name:{
+		type: Sequelize.STRING,
+		allowNull: false
+	},
+	last_name:{
+		type: Sequelize.STRING,
+		allowNull: false
 	}
 },{
 	paranoid: true
@@ -190,6 +198,15 @@ const UserPasswordReset = sequelize.define("UserPasswordReset", {
 	paranoid: true
 });
 
+const Note = sequelize.define("Note", {
+	text:{
+		type: Sequelize.TEXT,
+		allowNull: true
+	}
+},{
+	paranoid: true
+});
+
 Order.hasMany(Buyer);
 Order.hasMany(Seller);
 Order.hasMany(Document);
@@ -198,6 +215,8 @@ Order.hasMany(Invoice);
 Invoice.hasMany(InvoiceItem);
 Document.hasOne(Invoice);
 User.hasMany(UserPasswordReset);
+User.hasMany(Note);
+Order.hasMany(Note);
 
 sequelize.sync()
 
@@ -210,3 +229,4 @@ module.exports["Document"] = Document;
 module.exports["OrderForward"] = OrderForward;
 module.exports["Invoice"] = Invoice;
 module.exports["InvoiceItem"] = InvoiceItem;
+module.exports["Note"] = Note;

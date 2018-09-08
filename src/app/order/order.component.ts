@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
@@ -11,6 +11,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 	styleUrls: ['./order.component.css']
 })
 export class OrderComponent implements OnInit {
+	@ViewChild("noteList") private myScrollContainer: ElementRef;
 	id: number;
 	public buyer_index: number;
 	public seller_index: number;
@@ -19,7 +20,10 @@ export class OrderComponent implements OnInit {
 	public forward: any = {
 	};
 	public forwards: any = [];
+	public notes: any = [];
 	public order: any = {
+	};
+	public note: any = {
 	};
 	public document: any = {
 	};
@@ -33,6 +37,16 @@ export class OrderComponent implements OnInit {
 		cost: null
 	}];
 	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) { }
+	scrollToBottom(): void {
+		try {
+			this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+		} catch(err) {
+			console.log(err);
+		}
+	}
+	ngAfterViewChecked() {        
+		this.scrollToBottom();        
+	} 
 	ngOnInit(){
 		this.route.params.subscribe(params => {
 			this.id = +params.orderid;
@@ -42,6 +56,14 @@ export class OrderComponent implements OnInit {
 			this.order.lastUpdated = moment(this.order.updatedAt).format("dddd, MMMM Do YYYY hh:mm A");
 			this.order.dateofCreation = moment(this.order.createdAt).format("dddd, MMMM Do YYYY hh:mm A");
 			this.order.closed_date = this.order.closed_date ? moment(this.order.closed_date).format("dddd, MMMM Do YYYY hh:mm A") : null;
+			console.log("GET call successful value returned in body", val);
+		}, response => {
+			console.log("GET call in error", response);
+		}, () => {
+			console.log("The GET observable is now completed.");
+		});
+		this.http.get("/api/order/" + this.id + "/notes").subscribe((val) => {
+			this.notes = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -218,6 +240,26 @@ export class OrderComponent implements OnInit {
 				this.getDocuments();
 				$("#invoiceGenerated").show();
 			}, 2000);			
+		}, response => {
+			console.log("PUT call in error", response)
+		}, () => {
+			console.log("The PUT observable is now completed.");
+		});
+	}
+	newMessage(id){
+		var user = JSON.parse(localStorage.currentUser);
+		this.http.post("/api/order/"+ id + "/note", {
+			text: this.note.text,
+			UserId: user.id
+		}).subscribe((val) => {
+			console.log("PUT call successful value returned in body", val);
+			this.notes.push({
+				User:{
+					initials: user.initials
+				},
+				text: this.note.text
+			});
+			this.note.text = null;
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
