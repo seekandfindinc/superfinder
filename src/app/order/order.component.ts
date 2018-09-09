@@ -39,14 +39,14 @@ export class OrderComponent implements OnInit {
 	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) { }
 	scrollToBottom(): void {
 		try {
-			this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+			setTimeout(() => {
+				this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+			}, 200);
+			
 		} catch(err) {
 			console.log(err);
 		}
 	}
-	ngAfterViewChecked() {        
-		this.scrollToBottom();        
-	} 
 	ngOnInit(){
 		this.route.params.subscribe(params => {
 			this.id = +params.orderid;
@@ -239,7 +239,7 @@ export class OrderComponent implements OnInit {
 				this.spinner.hide();
 				this.getDocuments();
 				$("#invoiceGenerated").show();
-			}, 2000);			
+			}, 2000);
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
