@@ -260,6 +260,7 @@ export class OrderComponent implements OnInit {
 				text: this.note.text
 			});
 			this.note.text = null;
+			this.scrollToBottom();
 		}, response => {
 			console.log("PUT call in error", response)
 		}, () => {
