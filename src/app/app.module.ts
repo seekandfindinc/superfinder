@@ -14,6 +14,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from "jquery";
 import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -50,7 +51,8 @@ const appRoutes: Routes = [{
 		RouterModule.forRoot(appRoutes,{enableTracing: false}),
 		HttpClientModule,
 		FormsModule,
-		NgbModule
+		NgbModule,
+		NgxSpinnerModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

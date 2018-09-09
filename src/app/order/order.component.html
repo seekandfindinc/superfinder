@@ -1,232 +1,294 @@
 <br>
 <div class="container">
 	<app-navbar></app-navbar>
+	<div class="alert alert-info collapse" role="alert" id="forwardSent">
+		This order has been forwarded
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	<div class="alert alert-info collapse" role="alert" id="invoiceGenerated">
+		Invoice Generated (Check Documents)
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
 	<div class="card">
-		<div class="card-header">Details</div>
-		<div class="card-header" *ngIf="!order.closed" style="background-color: #f1c40f;">Open</div>
-		<div class="card-header" *ngIf="order.closed" style="background-color: #27ae60;">
+		<div class="card-header">
+			<ul class="nav nav-pills card-header-pills" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link active" id="info-tab" data-toggle="tab" href="#info" role="tab" aria-controls="info">File</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents">Documents</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="forwards-tab" data-toggle="tab" href="#forwards" role="tab" aria-controls="forwards">Forwards</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" (click)="scrollToBottom()">Notes</a>
+				</li>
+			</ul>
+		</div>
+		<div class="card-header" *ngIf="!order.closed" style="background-color: #2ed573;">Open</div>
+		<div class="card-header" *ngIf="order.closed" style="background-color: #ff7979;">
 			<div class="row">
 				<div class="col-6">Closed</div>
 				<div class="col-6 text-right">Closed {{order.closed_date}}</div>
 			</div>
 		</div>
-		<div class="card-body">
-			<div class="alert alert-info collapse" role="alert" id="forwardSent">
-				This order has been forwarded
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="alert alert-info collapse" role="alert" id="invoiceGenerated">
-				Invoice Generated (Check Documents)
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="row">
-				<div class="col">
-					<div class="font-weight-bold">Property</div>
-					<div class="font-weight-light">{{order.property_address}}</div>
-				</div>
-				<div class="col" *ngIf="!order.closed">
-					<div class="text-right">
-						<div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-							<button type="button" class="btn btn-dark btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
+		<div class="card-body text-left">
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+					<div class="btn-toolbar" role="toolbar" *ngIf="!order.closed">
+						<div class="btn-group mr-2" role="group">
 							<button type="button" class="btn btn-success btn-sm" *ngIf="inEditMode" (click)="saveOrder()" [disabled]="editOrderForm.form.invalid">Save</button>
-							<button type="button" class="btn btn-dark btn-sm" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#confirmModal">Mark Closed</button>
-							<div class="btn-group" role="group">
-								<button id="btnFunctions" type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Functions</button>
-								<div class="dropdown-menu" aria-labelledby="btnFunctions">
-									<a class="dropdown-item" data-toggle="modal" data-target="#emailForwardModal">Send Email Forward</a>
-									<a class="dropdown-item" data-toggle="modal" data-target="#generateInvoiceModal">Generate Invoice</a>
+							<button type="button" class="btn btn-secondary btn-sm" *ngIf="!inEditMode" (click)="editOrder()">Edit</button>
+						</div>
+						<div class="btn-group ml-auto" role="group" aria-label="Second group">
+							<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#confirmModal">Mark Closed</button>
+						</div>
+					</div>
+					<br *ngIf="!order.closed">
+					<div class="row">
+						<div class="col">
+							<div class="font-weight-bold">Property</div>
+							<div class="font-weight-light">{{order.property_address}}</div>
+						</div>
+					</div>
+					<br>
+					<form class="was-validated" #editOrderForm="ngForm">
+						<div class="row">
+							<div class="col">
+								<div class="font-weight-bold">Reference Number</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.reference_number}}</div>
+								<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number">
+								<div class="invalid-feedback">Please add reference number</div>
+							</div>
+							<div class="col">
+								<div class="font-weight-bold">Closing Date</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "EEEE, LLLL d, yyyy @ hh:mm a") : "TBD"}}</div>
+								<div class="input-group input-group-sm" *ngIf="inEditMode">
+									<input class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="temp_closing_date" [(ngModel)]="temp_closing_date.date" ngbDatepicker #d="ngbDatepicker">
+									<div class="input-group-append">
+										<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+										<i class="far fa-calendar-alt"></i>
+										</button>
+									</div>
+								</div>
+								<ngb-timepicker name="time" [(ngModel)]="temp_closing_date.time" *ngIf="inEditMode" [hourStep]="1" [minuteStep]="15"></ngb-timepicker>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col">
+								<div class="font-weight-bold">Lender</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.lender ? order.lender : "-"}}</div>
+								<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender">
+							</div>
+							<div class="col">
+								<div class="font-weight-bold">Corporation</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.corporation}}</div>
+								<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation">
+								<div class="invalid-feedback">Please add corporation</div>
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col">
+								<div class="font-weight-bold">Purchase Price</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.purchase_price | currency : "$"}}</div>
+								<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="purchasePrice" [(ngModel)]="order.purchase_price">
+									<div class="input-group-append">
+										<span class="input-group-text">.00</span>
+									</div>
+									<div class="invalid-feedback">Please add purchase price</div>
 								</div>
 							</div>
+							<div class="col">
+								<div class="font-weight-bold">Loan Amount</div>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.loan_amount ? (order.loan_amount | currency : "$") : "-"}}</div>
+								<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.loan_amount">
+									<div class="input-group-append">
+										<span class="input-group-text">.00</span>
+									</div>
+								</div>					
+							</div>
+						</div>
+						<br>
+						<div class="row">
+							<div class="col">
+								<div class="font-weight-bold">Buyer(s)</div>
+								<div class="row" *ngIf="!inEditMode">
+									<div class="col" *ngFor="let field of order.buyers">
+										<div class="font-weight-light">
+											{{field.name}}
+											<br>
+											{{field.address}}
+										</div>
+									</div>
+								</div>
+								<table class="table table-sm table-bordered" *ngIf="inEditMode">
+									<thead class="thead-light">
+										<tr>
+											<th scope="col">Name</th>
+											<th scope="col">Address</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let field of order.buyers; index as i;">
+											<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+											<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2">
+												<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
+												<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
+											</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+							<div class="col">
+								<div class="font-weight-bold">Seller(s)</div>
+								<div class="row" *ngIf="!inEditMode">
+									<div class="col" *ngFor="let field of order.sellers">
+										<div class="font-weight-light">
+											{{field.name}}
+											<br>
+											{{field.address}}
+										</div>
+									</div>
+								</div>
+								<table class="table table-sm table-bordered" *ngIf="inEditMode">
+									<thead class="thead-light">
+										<tr>
+											<th scope="col">Name</th>
+											<th scope="col">Address</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr *ngFor="let field of order.sellers; index as i;">
+											<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+											<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+										</tr>
+									</tbody>
+									<tfoot>
+										<tr>
+											<td colspan="2">
+												<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
+												<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
+											</td>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+					<div class="btn-toolbar" role="toolbar" *ngIf="!order.closed">
+						<div class="btn-group mr-2" role="group">
+							<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#newDocumentModal">Add Document</button>
+						</div>
+						<div class="btn-group ml-auto" role="group" aria-label="Second group">
+							<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#generateInvoiceModal">Generate Invoice</button>
+						</div>
+					</div>
+					<br *ngIf="!order.closed">
+					<table class="table table-bordered">
+						<thead class="thead-light">
+							<tr>
+								<th class="text-center" scope="col" width="33%">Description</th>
+								<th class="text-center" scope="col" width="33%">Upload Date</th>
+								<th class="text-center" scope="col" width="33%">Download</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let doc of documents">
+								<td class="text-center">{{doc.description}}</td>
+								<td class="text-center">{{doc.createdAt | date : "yyyy-MM-dd hh:mm a"}}</td>
+								<td class="text-center"><a (click)="download(doc.id)"><i class="fas fa-file fa-lg"></i></a></td>
+							</tr>
+							<tr *ngIf="documents.length < 1">
+								<td class="text-center" colspan="3">No Documents</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="tab-pane fade" id="forwards" role="tabpanel" aria-labelledby="forwards-tab">
+					<div class="btn-toolbar" role="toolbar" *ngIf="!order.closed">
+						<div class="btn-group mr-2" role="group">
+							<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#emailForwardModal">Send Email Forward</button>
+						</div>
+					</div>
+					<br *ngIf="!order.closed">
+					<table class="table table-bordered">
+						<thead class="thead-light">
+							<tr>
+								<th class="text-center" scope="col" width="50%">To</th>
+								<th class="text-center" scope="col" width="50%">Sent</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let forward of forwards">
+								<td class="text-center">{{forward.email}}</td>
+								<td class="text-center">{{forward.createdAt | date: "yyyy-MM-dd hh:mm a"}}</td>
+							</tr>
+							<tr *ngIf="forwards.length < 1">
+								<td class="text-center" colspan="3">No Forwards</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+					<div class="alert alert-chat" role="alert">
+						<div class="row scrollable" #noteList *ngIf="notes.length > 0">
+							<ul class="list-unstyled" style="width:100%">
+								<span *ngFor="let note of notes; index as i;">
+									<li class="media" >
+										<div class="rounded-circle box mr-3">
+											<div class="box-text">{{note.User.initials}}</div>
+										</div>
+										<div class="media-body note">
+											<div class="note-text">{{note.text}}</div>
+										</div>
+									</li>
+									<hr *ngIf="notes.length > 1 && (i < notes.length - 1) ">
+								</span>
+							</ul>
+						</div>
+						<div class="row scrollable" *ngIf="notes.length === 0">No Notes have been added to this order yet.</div>
+					</div> 
+					<div class="row" *ngIf="!order.closed">
+						<div class="col">
+							<form class="was-validated" #newMessageForm="ngForm" (ngSubmit)="newMessage(order.id)">
+								<div class="input-group mb-3">
+									<input type="text" class="form-control" placeholder="Note" name="text" [(ngModel)]="note.text" required>
+									<div class="input-group-append">
+										<button class="btn btn-outline-dark" type="submit" [disabled]="newMessageForm.form.invalid">Add</button>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>
 			</div>
-			<br>
-			<form class="was-validated" #editOrderForm="ngForm">
-				<div class="row">
-					<div class="col">
-						<div class="font-weight-bold">Reference Number</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.reference_number}}</div>
-						<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number">
-						<div class="invalid-feedback">Please add reference number</div>
-					</div>
-					<div class="col">
-						<div class="font-weight-bold">Closing Date</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "EEEE, LLLL d, yyyy @ hh:mm a") : "TBD"}}</div>
-						<div class="input-group input-group-sm" *ngIf="inEditMode">
-							<input class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="temp_closing_date" [(ngModel)]="temp_closing_date.date" ngbDatepicker #d="ngbDatepicker">
-							<div class="input-group-append">
-								<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-								<i class="far fa-calendar-alt"></i>
-								</button>
-							</div>
-						</div>
-						<ngb-timepicker name="time" [(ngModel)]="temp_closing_date.time" *ngIf="inEditMode" [hourStep]="1" [minuteStep]="15"></ngb-timepicker>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col">
-						<div class="font-weight-bold">Lender</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.lender ? order.lender : "-"}}</div>
-						<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender">
-					</div>
-					<div class="col">
-						<div class="font-weight-bold">Corporation</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.corporation}}</div>
-						<input type="text" required *ngIf="inEditMode" class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation">
-						<div class="invalid-feedback">Please add corporation</div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col">
-						<div class="font-weight-bold">Purchase Price</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.purchase_price | currency : "$"}}</div>
-						<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
-							<div class="input-group-prepend">
-								<span class="input-group-text">$</span>
-							</div>
-							<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="purchasePrice" [(ngModel)]="order.purchase_price">
-							<div class="input-group-append">
-								<span class="input-group-text">.00</span>
-							</div>
-							<div class="invalid-feedback">Please add purchase price</div>
-						</div>
-					</div>
-					<div class="col">
-						<div class="font-weight-bold">Loan Amount</div>
-						<div class="font-weight-light" *ngIf="!inEditMode">{{order.loan_amount ? (order.loan_amount | currency : "$") : "-"}}</div>
-						<div class="input-group input-group-sm mb-3" *ngIf="inEditMode">
-							<div class="input-group-prepend">
-								<span class="input-group-text">$</span>
-							</div>
-							<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.loan_amount">
-							<div class="input-group-append">
-								<span class="input-group-text">.00</span>
-							</div>
-						</div>					
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col">
-						<div class="font-weight-bold">Buyer(s)</div>
-						<div class="row" *ngIf="!inEditMode">
-							<div class="col" *ngFor="let field of order.buyers">
-								<div class="font-weight-light">
-									{{field.name}}
-									<br>
-									{{field.address}}
-								</div>
-							</div>
-						</div>
-						<table class="table table-sm table-bordered" *ngIf="inEditMode">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col">Name</th>
-									<th scope="col">Address</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let field of order.buyers; index as i;">
-									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="2">
-										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
-										<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-					<div class="col">
-						<div class="font-weight-bold">Seller(s)</div>
-						<div class="row" *ngIf="!inEditMode">
-							<div class="col" *ngFor="let field of order.sellers">
-								<div class="font-weight-light">
-									{{field.name}}
-									<br>
-									{{field.address}}
-								</div>
-							</div>
-						</div>
-						<table class="table table-sm table-bordered" *ngIf="inEditMode">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col">Name</th>
-									<th scope="col">Address</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let field of order.sellers; index as i;">
-									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="2">
-										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
-										<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-				</div>
-			</form>
 		</div>
 		<div class="card-footer text-muted">
 			<div class="row">
 				<div class="col-6">Last Updated {{order.lastUpdated}}</div>
 				<div class="col-6 text-right">Created {{order.dateofCreation}}</div>
-			</div>
-		</div>
-	</div>
-	<br>
-	<div class="row">
-		<div class="col-8">
-			<div class="card">
-				<div class="card-header">Documents</div>
-				<div class="card-body">
-					<div class="row" *ngIf="!order.closed">
-						<div class="col">
-							<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#newDocumentModal">Add Document</button>
-						</div>
-					</div>
-					<br *ngIf="!order.closed">
-					<div *ngIf="documents.length > 0">
-						<div class="alert alert-dark" role="alert" *ngFor="let doc of documents">
-							<div class="row">
-								<div class="col-6"><a (click)="download(doc.id)"><i class="fas fa-file fa-lg"></i></a>&nbsp;{{doc.description}}</div>
-								<div class="col-6 text-right">Uploaded @ {{doc.createdAt | date : "yyyy-MM-dd hh:mm a"}}</div>
-							</div>
-						</div>
-					</div>
-					<div *ngIf="documents.length < 1">No Documents</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-4">
-			<div class="card">
-				<div class="card-header">Last Email Forward</div>
-				<div class="card-body">
-					<p class="card-text" *ngIf="last_forward">
-						<label>To:</label> {{last_forward.email}}
-						<br>
-						<small class="text-muted">Sent on {{last_forward.createdAt | date: "yyyy-MM-dd hh:mm a"}}</small>
-					</p>
-					<p class="card-text" *ngIf="!last_forward">No Previous Forward</p>
-				</div>
 			</div>
 		</div>
 	</div>

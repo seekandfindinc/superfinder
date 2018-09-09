@@ -12,12 +12,16 @@ export class LoginComponent implements OnInit {
 	register_email: string;
 	forgot_email: string;
 	password: string;
+	first_name: string;
+	last_name: string;
 	constructor(private http: HttpClient, private router: Router) { }
 	ngOnInit() {
 	}
 	newUserSubmit() {
 		this.http.post("/api/register", {
-			email: this.register_email
+			email: this.register_email,
+			first_name: this.first_name,
+			last_name: this.last_name,
 		}).subscribe((val) => {
 			alert("User Registered. Password will be emailed shortly. Once approved you will be notified.");
 			console.log("POST call successful value returned in body", val);
