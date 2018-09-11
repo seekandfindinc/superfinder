@@ -1,0 +1,30 @@
+<br>
+<div class="container">
+	<app-navbar></app-navbar>
+	<table class="table">
+		<thead class="thead-light">
+			<tr>
+				<th class="text-center" scope="col">E-Mail</th>
+				<th class="text-center" scope="col">Password</th>
+				<th class="text-center" scope="col">Approval</th>
+				<th class="text-center" scope="col">First Name</th>
+				<th class="text-center" scope="col">Last Name</th>
+				<th class="text-center" scope="col">Registration Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let user of users">
+				<td class="text-center">{{user.email}}</td>
+				<td class="text-center">
+					<button type="button" class="btn btn-danger btn-sm" (click)="resetPassword(user.id)">Reset</button>
+				</td>
+				<td class="text-center">
+					<button type="button" class="btn btn-secondary btn-sm" (click)="userApprove(user.id)" [disabled]="user.approved">Approve</button>
+				</td>
+				<td class="text-center">{{user.first_name}}</td>
+				<td class="text-center">{{user.last_name}}</td>
+				<td class="text-center">{{user.createdAt | date : "yyyy-MM-dd"}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

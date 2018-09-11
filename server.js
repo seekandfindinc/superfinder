@@ -87,28 +87,41 @@ app.get("/api/user", [
 });
 
 app.put("/api/user", function(req, res){
-	models.User.find({
-		where:{
-			id: req.body.id
-		},
-		raw: true
-	}).then((user) => {
-		if(user){
-			models.User.update({
-				password: bcrypt.hashSync(req.body.password, 10)
-			},{
-				where:{
-					id: req.body.id
-				}
-			}).then((user) => {
-				res.send(true);
-			}).catch((err) => {
-				res.status(500).send(err.stack);
-			});
-		}
-		else{
+	if(req.body.password){
+		models.User.update({
+			password: bcrypt.hashSync(req.body.password, 10)
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
 			res.send(true);
-		}
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else if(req.body.approved){
+		models.User.update({
+			approved: req.body.approved
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
+			res.send(true);
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else {
+		res.send(true);
+	}
+});
+
+app.get("/api/users", function(req, res){
+	models.User.findAll({
+		raw: true,
+		attributes: ["id", "email", "approved", "createdAt", "updatedAt", "deletedAt", "first_name", "last_name"]
+	}).then((users) => {
+		res.send(users);
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
@@ -178,17 +191,15 @@ app.get("/api/user/forgot/:hash", function(req, res){
 	});
 });
 
-app.post("/api/user/forgot", [
-	check("email").isEmail()
-], function(req, res){
+app.post("/api/user/forgot", function(req, res){
 	const password_reset_step1_email = fs.readFileSync("email_templates/password_reset_step1_email.html", "utf8");
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-		return res.status(422).json({ errors: errors.array() });
-	};
 	models.User.find({
 		where:{
-			email: req.body.email
+			$or: [{
+				email: req.body.email
+			},{
+				id: req.body.id
+			}]
 		},
 		raw: true
 	}).then((user) => {
@@ -202,7 +213,7 @@ app.post("/api/user/forgot", [
 			}).then((password_reset) => {
 				transporter.sendMail({
 					from: "team@seekandfindinc.com",
-					to: req.body.email,
+					to: user.email,
 					subject: "Reset Password",
 					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash)
 				}, (error, info) => {

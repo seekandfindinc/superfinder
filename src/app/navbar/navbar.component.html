@@ -1,18 +1,35 @@
 <ngx-spinner bdColor = "rgba(51, 51, 51, 0.8)" size = "large" color = "#fff" type = "ball-spin"></ngx-spinner>
-<nav aria-label="breadcrumb">
-	<ol class="breadcrumb">
-		<li class="breadcrumb-item" *ngIf="!isOrder">Orders</li>
-		<li class="breadcrumb-item" *ngIf="isOrder"><a routerLink="/admin/dashboard">Orders</a></li>
-		<li class="breadcrumb-item active" *ngIf="isOrder">Order</li>
-		<li class="ml-auto">
-			<a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User</a>
-			<div class="dropdown-menu" aria-labelledby="userDropdown">
-				<a class="dropdown-item" data-toggle="modal" data-target="#resetPasswordModal">Reset Password</a>
-				<a class="dropdown-item" routerLink="#" (click)="logout()">Sign Out</a>
-			</div>
-		</li>
-	</ol>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<span class="navbar-brand">Navbar</span>
+	<button class="navbar-toggler" type="button" data-toggle=
+	"collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/admin/dashboard">Orders</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/admin/users">Users</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" routerLink="/admin/invoices">Invoices</a>
+			</li>
+		</ul>
+		<ul class="navbar-nav ml-auto">
+			<li class="nav-item dropdown my-4 my-lg-0">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" data-toggle="modal" data-target="#resetPasswordModal">Reset Password</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" routerLink="#" (click)="logout()">Sign Out</a>
+				</div>
+			</li>
+		</ul>
+	</div>
 </nav>
+<br>
 <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
