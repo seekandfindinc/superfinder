@@ -16,7 +16,6 @@ import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './user/user.component';
-import { InvoiceComponent } from './invoice/invoice.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -32,10 +31,6 @@ const appRoutes: Routes = [{
 },{
 	path: "admin/users",
 	component: UserComponent,
-	canActivate: [AuthGuard]
-},{
-	path: "admin/invoices",
-	component: InvoiceComponent,
 	canActivate: [AuthGuard]
 },{
 	path: "admin/user/forgot",
@@ -55,8 +50,7 @@ const appRoutes: Routes = [{
 		NavbarComponent,
 		SearchPipe,
 		ForgotComponent,
-		UserComponent,
-		InvoiceComponent
+		UserComponent
 	],
 	imports: [
 		BrowserModule,

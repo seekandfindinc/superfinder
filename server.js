@@ -564,6 +564,33 @@ app.post("/api/document", upload.single("file"), function(req, res){
 	});
 });
 
+app.get("/api/invoice/:orderid", function(req, res){
+	models.Invoice.find({
+		where:{
+			OrderId: req.params.orderid,
+		},
+		raw: true
+	}).then((invoice) => {
+		if(invoice){
+			models.InvoiceItem.findAll({
+				where:{
+					InvoiceId: invoice.id
+				},
+				raw: true
+			}).then((invoiceItems) => {
+				invoice.items = invoiceItems;
+				res.send(invoice);
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		} else {
+			res.send(null);
+		}
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
 app.post("/api/invoice/:orderid", function(req, res){
 	var items = req.body;
 	var total_cost = 0;
@@ -785,6 +812,19 @@ app.post("/api/invoice/:orderid", function(req, res){
 		return res.status(500).send(err.stack);
 	});
 });
+
+app.put("/api/invoice/:id", function(req, res){
+	models.Invoice.update(req.body,{
+		where:{
+			id: req.params.id
+		}
+	}).then((invoice) => {
+		res.send(true);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
 
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
