@@ -9,15 +9,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 	styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-	isOrder: boolean = true;
 	new_password: string;
 	new_password_confirm: string;
 	constructor(private router: Router, private http: HttpClient, private spinner: NgxSpinnerService) { }
-	ngOnInit() {
-		if(this.router.url === "/admin/dashboard"){
-			this.isOrder = false;
-		}
-	}
+	ngOnInit() {}
 	logout(){
 		localStorage.removeItem("currentUser");
 		this.router.navigate(["/admin"]);

@@ -87,28 +87,41 @@ app.get("/api/user", [
 });
 
 app.put("/api/user", function(req, res){
-	models.User.find({
-		where:{
-			id: req.body.id
-		},
-		raw: true
-	}).then((user) => {
-		if(user){
-			models.User.update({
-				password: bcrypt.hashSync(req.body.password, 10)
-			},{
-				where:{
-					id: req.body.id
-				}
-			}).then((user) => {
-				res.send(true);
-			}).catch((err) => {
-				res.status(500).send(err.stack);
-			});
-		}
-		else{
+	if(req.body.password){
+		models.User.update({
+			password: bcrypt.hashSync(req.body.password, 10)
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
 			res.send(true);
-		}
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else if(req.body.approved){
+		models.User.update({
+			approved: req.body.approved
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
+			res.send(true);
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else {
+		res.send(true);
+	}
+});
+
+app.get("/api/users", function(req, res){
+	models.User.findAll({
+		raw: true,
+		attributes: ["id", "email", "approved", "createdAt", "updatedAt", "deletedAt", "first_name", "last_name"]
+	}).then((users) => {
+		res.send(users);
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
@@ -178,17 +191,15 @@ app.get("/api/user/forgot/:hash", function(req, res){
 	});
 });
 
-app.post("/api/user/forgot", [
-	check("email").isEmail()
-], function(req, res){
+app.post("/api/user/forgot", function(req, res){
 	const password_reset_step1_email = fs.readFileSync("email_templates/password_reset_step1_email.html", "utf8");
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-		return res.status(422).json({ errors: errors.array() });
-	};
 	models.User.find({
 		where:{
-			email: req.body.email
+			$or: [{
+				email: req.body.email
+			},{
+				id: req.body.id
+			}]
 		},
 		raw: true
 	}).then((user) => {
@@ -202,7 +213,7 @@ app.post("/api/user/forgot", [
 			}).then((password_reset) => {
 				transporter.sendMail({
 					from: "team@seekandfindinc.com",
-					to: req.body.email,
+					to: user.email,
 					subject: "Reset Password",
 					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash)
 				}, (error, info) => {
@@ -553,6 +564,33 @@ app.post("/api/document", upload.single("file"), function(req, res){
 	});
 });
 
+app.get("/api/invoice/:orderid", function(req, res){
+	models.Invoice.find({
+		where:{
+			OrderId: req.params.orderid,
+		},
+		raw: true
+	}).then((invoice) => {
+		if(invoice){
+			models.InvoiceItem.findAll({
+				where:{
+					InvoiceId: invoice.id
+				},
+				raw: true
+			}).then((invoiceItems) => {
+				invoice.items = invoiceItems;
+				res.send(invoice);
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		} else {
+			res.send(null);
+		}
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
 app.post("/api/invoice/:orderid", function(req, res){
 	var items = req.body;
 	var total_cost = 0;
@@ -774,6 +812,19 @@ app.post("/api/invoice/:orderid", function(req, res){
 		return res.status(500).send(err.stack);
 	});
 });
+
+app.put("/api/invoice/:id", function(req, res){
+	models.Invoice.update(req.body,{
+		where:{
+			id: req.params.id
+		}
+	}).then((invoice) => {
+		res.send(true);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
 
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
