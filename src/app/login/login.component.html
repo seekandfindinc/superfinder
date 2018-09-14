@@ -41,6 +41,16 @@
 									<input type="email" class="form-control form-control-sm" required [(ngModel)]="register_email" name="register_email" email>
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
+								<div class="form-group">
+									<label>First Name</label>
+									<input type="text" class="form-control form-control-sm" required [(ngModel)]="first_name" name="first_name">
+									<div class="invalid-feedback">Enter first name</div>
+								</div>
+								<div class="form-group">
+									<label>Last Name</label>
+									<input type="text" class="form-control form-control-sm" required [(ngModel)]="last_name" name="last_name">
+									<div class="invalid-feedback">Enter last name</div>
+								</div>
 								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="newUserForm.form.invalid">Register</button>
 							</form>
 						</div>

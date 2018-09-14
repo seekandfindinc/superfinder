@@ -14,6 +14,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from "jquery";
 import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { UserComponent } from './user/user.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -25,6 +27,10 @@ const appRoutes: Routes = [{
 },{
 	path: "admin/dashboard/order/:orderid",
 	component: OrderComponent,
+	canActivate: [AuthGuard]
+},{
+	path: "admin/users",
+	component: UserComponent,
 	canActivate: [AuthGuard]
 },{
 	path: "admin/user/forgot",
@@ -43,14 +49,16 @@ const appRoutes: Routes = [{
 		OrderComponent,
 		NavbarComponent,
 		SearchPipe,
-		ForgotComponent
+		ForgotComponent,
+		UserComponent
 	],
 	imports: [
 		BrowserModule,
 		RouterModule.forRoot(appRoutes,{enableTracing: false}),
 		HttpClientModule,
 		FormsModule,
-		NgbModule
+		NgbModule,
+		NgxSpinnerModule
 	],
 	providers: [],
 	bootstrap: [AppComponent]

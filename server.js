@@ -27,7 +27,8 @@ const transporter = nodemailer.createTransport({
 		pass: config.email_password
 	}
 });
-var pdfmake = require("pdfmake");
+const pdfmake = require("pdfmake");
+const Sequelize = require("sequelize");
 
 http.createServer(function (req, res) {
 	var header = req.headers["host"];
@@ -69,7 +70,8 @@ app.get("/api/user", [
 			if(bcrypt.compareSync(req.query.password, user.password)){
 				res.send({
 					id: user.id,
-					email: user.email
+					email: user.email,
+					initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
 				});
 			}
 			else{
@@ -85,28 +87,41 @@ app.get("/api/user", [
 });
 
 app.put("/api/user", function(req, res){
-	models.User.find({
-		where:{
-			id: req.body.id
-		},
-		raw: true
-	}).then((user) => {
-		if(user){
-			models.User.update({
-				password: bcrypt.hashSync(req.body.password, 10)
-			},{
-				where:{
-					id: req.body.id
-				}
-			}).then((user) => {
-				res.send(true);
-			}).catch((err) => {
-				res.status(500).send(err.stack);
-			});
-		}
-		else{
+	if(req.body.password){
+		models.User.update({
+			password: bcrypt.hashSync(req.body.password, 10)
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
 			res.send(true);
-		}
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else if(req.body.approved){
+		models.User.update({
+			approved: req.body.approved
+		},{
+			where:{
+				id: req.body.id
+			}
+		}).then((user) => {
+			res.send(true);
+		}).catch((err) => {
+			res.status(500).send(err.stack);
+		});
+	} else {
+		res.send(true);
+	}
+});
+
+app.get("/api/users", function(req, res){
+	models.User.findAll({
+		raw: true,
+		attributes: ["id", "email", "approved", "createdAt", "updatedAt", "deletedAt", "first_name", "last_name"]
+	}).then((users) => {
+		res.send(users);
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
@@ -176,17 +191,15 @@ app.get("/api/user/forgot/:hash", function(req, res){
 	});
 });
 
-app.post("/api/user/forgot", [
-	check("email").isEmail()
-], function(req, res){
+app.post("/api/user/forgot", function(req, res){
 	const password_reset_step1_email = fs.readFileSync("email_templates/password_reset_step1_email.html", "utf8");
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-		return res.status(422).json({ errors: errors.array() });
-	};
 	models.User.find({
 		where:{
-			email: req.body.email
+			$or: [{
+				email: req.body.email
+			},{
+				id: req.body.id
+			}]
 		},
 		raw: true
 	}).then((user) => {
@@ -200,7 +213,7 @@ app.post("/api/user/forgot", [
 			}).then((password_reset) => {
 				transporter.sendMail({
 					from: "team@seekandfindinc.com",
-					to: req.body.email,
+					to: user.email,
 					subject: "Reset Password",
 					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash)
 				}, (error, info) => {
@@ -233,7 +246,9 @@ app.post("/api/register", [
 	var password = chance.word({length: 12});
 	models.User.create({
 		email: req.body.email,
-		password: bcrypt.hashSync(password, 10)
+		password: bcrypt.hashSync(password, 10),
+		first_name: req.body.first_name,
+		last_name: req.body.last_name
 	}).then((user) => {
 		transporter.sendMail({
 			from: "team@seekandfindinc.com",
@@ -378,15 +393,48 @@ app.post("/api/order", function(req, res){
 	});
 });
 
-app.get("/api/order/:id/forward/recent", function(req, res){
-	models.OrderForward.find({
+app.get("/api/order/:id/notes", function(req, res){
+	models.Note.belongsTo(models.User, {foreignKey: "UserId", targetKey: "id"}); 
+	models.Note.findAll({
+		where:{
+			OrderId: req.params.id
+		},
+		raw: true,
+		order:[["createdAt", "ASC"]],
+		nest: true,
+		include:[{
+			model: models.User,
+			attributes: [[Sequelize.literal("CONCAT(UPPER(SUBSTRING(first_name, 1, 1)), UPPER(SUBSTRING(last_name, 1, 1)))"), "initials"]]
+
+		}]
+	}).then((notes) => {
+		res.send(notes);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
+app.post("/api/order/:id/note", function(req, res){
+	models.Note.create({
+		text: req.body.text,
+		UserId: req.body.UserId,
+		OrderId: req.params.id
+	}).then((note) => {
+		return res.send(true);
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/order/:id/forwards", function(req, res){
+	models.OrderForward.findAll({
 		where:{
 			OrderId: req.params.id
 		},
 		raw: true,
 		order:[["createdAt", "DESC"]]
-	}).then((orderforward) => {
-		res.send(orderforward);
+	}).then((orderforwards) => {
+		res.send(orderforwards);
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
@@ -511,6 +559,33 @@ app.post("/api/document", upload.single("file"), function(req, res){
 		OrderId: req.body.OrderId
 	}).then((document) => {
 		return res.send(document);
+	}).catch((err) => {
+		return res.status(500).send(err.stack);
+	});
+});
+
+app.get("/api/invoice/:orderid", function(req, res){
+	models.Invoice.find({
+		where:{
+			OrderId: req.params.orderid,
+		},
+		raw: true
+	}).then((invoice) => {
+		if(invoice){
+			models.InvoiceItem.findAll({
+				where:{
+					InvoiceId: invoice.id
+				},
+				raw: true
+			}).then((invoiceItems) => {
+				invoice.items = invoiceItems;
+				res.send(invoice);
+			}).catch((err) => {
+				return res.status(500).send(err.stack);
+			});
+		} else {
+			res.send(null);
+		}
 	}).catch((err) => {
 		return res.status(500).send(err.stack);
 	});
@@ -737,6 +812,19 @@ app.post("/api/invoice/:orderid", function(req, res){
 		return res.status(500).send(err.stack);
 	});
 });
+
+app.put("/api/invoice/:id", function(req, res){
+	models.Invoice.update(req.body,{
+		where:{
+			id: req.params.id
+		}
+	}).then((invoice) => {
+		res.send(true);
+	}).catch((err) => {
+		res.status(500).send(err.stack);
+	});
+});
+
 
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));

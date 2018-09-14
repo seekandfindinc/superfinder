@@ -1,0 +1,32 @@
+.scrollable{
+	height: 400px;
+	max-height: 400px;
+	overflow-y: scroll;
+	padding: 10px;
+}
+.box{
+	background:#dfe6e9;
+	width:64px;
+	height:64px;
+	display:table;
+}
+.box-text{
+	display:table-cell;
+	vertical-align:middle;
+	text-align:center;
+	font-size:20px;
+	font-weight:100;
+	color:#ffffff;
+}
+.note{
+	height:64px;
+	display:table;
+}
+.note-text{
+	display:table-cell;
+	vertical-align:middle;
+}
+.alert-chat{
+	background-color:#ffffff;
+	border-color:#ecf0f1;
+}
