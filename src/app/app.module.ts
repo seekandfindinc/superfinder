@@ -16,6 +16,7 @@ import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './user/user.component';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -50,7 +51,8 @@ const appRoutes: Routes = [{
 		NavbarComponent,
 		SearchPipe,
 		ForgotComponent,
-		UserComponent
+		UserComponent,
+		TimeAgoPipe
 	],
 	imports: [
 		BrowserModule,
