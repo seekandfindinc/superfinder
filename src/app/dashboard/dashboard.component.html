@@ -1,138 +1,82 @@
 <br>
 <div class="container">
 	<app-navbar></app-navbar>
-	<div class="input-group input-group-sm mb-3">
-		<div class="input-group-prepend">
-			<span class="input-group-text">Search</span>
-		</div>
-		<input [(ngModel)]="searchText" type="text" class="form-control form-control-sm" placeholder="Last Name / Order #">
-		<div class="input-group-append" id="button-addon4">
-			<button class="btn btn-outline-secondary" type="button" data-toggle="modal" data-target="#newOrderModal">Add Order</button>
+	<div class="row">
+		<div class="col">
+			<div class="alert alert-success collapse" id="order_new" role="alert">
+			Order Added
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
 		</div>
 	</div>
-	<div class="row" *ngIf="orders.length > 0">
-		<div class="col-2" *ngFor="let order of orders | search : searchText">
-			<p class="text-left font-weight-light">
-				<small>{{order.reference_number}}</small>
-				<br>
-				<a [routerLink]="['/admin/dashboard/order', order.id]"><i class="fas fa-folder{{order.closed ? '' : '-open'}} fa-8x" style="color:#E6DD93;"></i></a>
-			</p>
+	<div class="card">
+		<div class="card-header">Filters</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col">
+					<label>Corporation</label>
+					<input type="text" [(ngModel)]="filters.corporation" class="form-control form-control-sm" placeholder="ABC Corporation">
+				</div>
+				<div class="col">
+					<label>Property Address</label>
+					<input type="text" [(ngModel)]="filters.property_address" class="form-control form-control-sm" placeholder="1 Apple Street, New York, NY 10001">
+				</div>
+				<div class="col">
+					<label>Order Reference</label>
+					<input type="text" [(ngModel)]="filters.reference_number" class="form-control form-control-sm" placeholder="123456">
+				</div>
+				<div class="col">
+					<label>Lender</label>
+					<input type="text" [(ngModel)]="filters.lender" class="form-control form-control-sm" placeholder="Bank of Money">
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col">
+					<label>Closing Date</label>
+					<div class="input-group mb-3">
+						<input type="text" [(ngModel)]="filters.closing_date" class="form-control form-control-sm" placeholder="2018-01-01">
+						<div class="input-group-append">
+							<button class="btn btn-outline-dark btn-sm" type="button"><i class="far fa-calendar-alt"></i></button>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<label>Status</label>
+					<select class="form-control form-control-sm" [(ngModel)]="filters.closed">
+						<option></option>
+						<option value="0">Open</option>
+						<option value="1">Closed</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col text-right">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-info btn-sm" (click)="clear()">Clear</button>
+						<button type="button" class="btn btn-success btn-sm" (click)="search(filters)">Search</button>
+					</div>
+				</div>
+			</div>			
 		</div>
+	</div>
+	<br>
+	<div class="list-group">
+		<a [routerLink]="['/admin/dashboard/order', order.id]" class="list-group-item list-group-item-action flex-column align-items-start {{order.closed ? 'list-group-item-danger' : 'list-group-item-success'}}" *ngFor="let order of orders">
+			<div class="d-flex w-100 justify-content-between">
+				<h5 class="mb-1">{{order.property_address}}</h5>
+				<small>Last Updated {{order.updatedAt | timeAgo}}</small>
+			</div>
+			<p class="mb-1">{{order.corporation}}</p>
+			<small>
+				<b>Buyers: {{order.buyers.join(", ")}}</b>
+				<br>
+				<b>Sellers: {{order.sellers.join(", ")}} </b>
+			</small>
+		</a>
 	</div>
 	<div class="row" *ngIf="orders.length < 1">
-		<div class="col">
-			<div class="alert alert-light" role="alert">No orders found</div>
-		</div>
+		<div class="col">No Orders</div>
 	</div>
-</div>
-<div class="modal fade" id="newOrderModal" tabindex="-1" role="dialog" aria-labelledby="newOrderModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<form class="was-validated" (ngSubmit)="orderSubmit()" #newOrderForm="ngForm">
-				<div class="modal-header">
-					<h5 class="modal-title" id="newOrderModalLabel">Add Order</h5>
-				</div>
-				<div class="modal-body">
-					<div class="form-group">
-						<label>Property</label>
-						<input type="text" required class="form-control form-control-sm" name="propertyAddress" [(ngModel)]="order.propertyAddress" placeholder="1 Apple Street, New York, NY 10001">
-						<div class="invalid-feedback">Please add property address</div>
-					</div>
-					<div class="form-group">
-						<label>Reference #</label>
-						<input type="text" required class="form-control form-control-sm" name="referenceNumber" [(ngModel)]="order.referenceNumber" placeholder="123456">
-						<div class="invalid-feedback">Please add reference number</div>
-					</div>
-					<div class="form-group">
-						<label>Lender</label>
-						<input type="text" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender" placeholder="Bank of Awesome">
-					</div>
-					<div class="form-group">
-						<label>Corporation</label>
-						<input type="text" required class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation" placeholder="Joe Schmo">
-						<div class="invalid-feedback">Please add corporation</div>
-					</div>
-					<div class="form-group">
-						<label>Purchase Price</label>
-						<div class="input-group input-group-sm mb-3">
-							<div class="input-group-prepend">
-								<span class="input-group-text">$</span>
-							</div>
-							<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="purchasePrice" [(ngModel)]="order.purchasePrice">
-							<div class="input-group-append">
-								<span class="input-group-text">.00</span>
-							</div>
-							<div class="invalid-feedback">Please add purchase price</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label>Loan Amount</label>
-						<div class="input-group input-group-sm mb-3">
-							<div class="input-group-prepend">
-								<span class="input-group-text">$</span>
-							</div>
-							<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loanAmount" [(ngModel)]="order.loanAmount">
-							<div class="input-group-append">
-								<span class="input-group-text">.00</span>
-							</div>
-						</div>
-					</div>
-					<div class="form-group">
-						<label>Buyer(s)</label>
-						<table class="table table-sm table-bordered">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col">Name</th>
-									<th scope="col">Address</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let field of order.buyerFieldArray; index as i;">
-									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyerFieldArray[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyerFieldArray[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="2">
-										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
-										<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-					<div class="form-group">
-						<label>Seller(s)</label>
-						<table class="table table-sm table-bordered">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col">Name</th>
-									<th scope="col">Address</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let field of order.sellerFieldArray; index as i;">
-									<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellerFieldArray[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-									<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellerFieldArray[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr>
-									<td colspan="2">
-										<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
-										<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
-									</td>
-								</tr>
-							</tfoot>
-						</table>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary" [disabled]="newOrderForm.form.invalid">Save</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-				</div>
-			</form>
-		</div>
-	</div>
+	<br>
 </div>

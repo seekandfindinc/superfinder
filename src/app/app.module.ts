@@ -16,6 +16,8 @@ import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './user/user.component';
+import { TimeAgoPipe } from 'time-ago-pipe';
+import { OrderNewComponent } from './order-new/order-new.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -27,6 +29,10 @@ const appRoutes: Routes = [{
 },{
 	path: "admin/dashboard/order/:orderid",
 	component: OrderComponent,
+	canActivate: [AuthGuard]
+},{
+	path: "admin/dashboard/create/order",
+	component: OrderNewComponent,
 	canActivate: [AuthGuard]
 },{
 	path: "admin/users",
@@ -50,7 +56,9 @@ const appRoutes: Routes = [{
 		NavbarComponent,
 		SearchPipe,
 		ForgotComponent,
-		UserComponent
+		UserComponent,
+		TimeAgoPipe,
+		OrderNewComponent
 	],
 	imports: [
 		BrowserModule,
