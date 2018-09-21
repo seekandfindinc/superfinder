@@ -42,7 +42,9 @@ export class OrderComponent implements OnInit {
 	scrollToBottom(): void {
 		try {
 			setTimeout(() => {
-				this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+				if(this.notes.length > 0){
+					this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+				}
 			}, 200);
 			
 		} catch(err) {
