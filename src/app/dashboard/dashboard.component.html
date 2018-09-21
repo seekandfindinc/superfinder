@@ -1,10 +1,16 @@
 <br>
 <div class="container">
 	<app-navbar></app-navbar>
-
-
+	<div class="row">
+		<div class="col">
+			<div class="alert alert-success collapse" id="order_new" role="alert">
+			Order Added
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+		</div>
+	</div>
 	<div class="card">
-		<div class="card-header">Search Filters</div>
+		<div class="card-header">Filters</div>
 		<div class="card-body">
 			<div class="row">
 				<div class="col">
@@ -72,5 +78,5 @@
 	<div class="row" *ngIf="orders.length < 1">
 		<div class="col">No Orders</div>
 	</div>
+	<br>
 </div>
-

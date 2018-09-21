@@ -290,7 +290,7 @@ app.get("/api/order", function(req, res){
 	models.Order.findAll({
 		raw: true,
 		where: order_where,
-		order:[["createdAt", "DESC"]]
+		order:[["updatedAt", "DESC"]]
 	}).then((orders) => {
 		if(orders.length > 0){
 			models.Buyer.findAll({

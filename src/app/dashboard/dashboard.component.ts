@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { URLSearchParams } from "@angular/http";
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-dashboard',
@@ -11,8 +12,13 @@ import { TimeAgoPipe } from 'time-ago-pipe';
 export class DashboardComponent implements OnInit {
 	public orders: any = [];
 	public filters: any = {};
-	constructor(private http: HttpClient) {}
-	ngOnInit() {}
+	constructor(private http: HttpClient, private route: ActivatedRoute) {}
+	ngOnInit() {
+		let action = this.route.snapshot.queryParams["action"];
+		if(action === "order_new"){
+			$("#order_new").show();
+		}
+	}
 	search(filter_values){
 		let params = new URLSearchParams();
 		for(let key in filter_values){
