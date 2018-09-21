@@ -39,7 +39,7 @@ const Order = sequelize.define("Order", {
 	},
 	reference_number:{
 		type: Sequelize.STRING,
-		allowNull: false
+		allowNull: true
 	},
 	lender:{
 		type: Sequelize.STRING,

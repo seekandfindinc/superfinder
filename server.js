@@ -268,10 +268,58 @@ app.post("/api/register", [
 });
 
 app.get("/api/order", function(req, res){
+	let order_where = {};
+	if(req.query){
+		for(let item in req.query){
+			if(item === "corporation" || item === "property_address" || item === "lender"){
+				order_where[item] = {
+					$like: "%" + req.query[item] + "%"	
+				}
+			}
+			else if(item === "reference_number" || item === "closed"){
+				order_where[item] = req.query[item];
+			}
+			else if(item === "closing_date"){
+				order_where[item] = {
+					$gte: req.query[item] + " 00:00:00",
+					$lte: req.query[item] + " 23:59:59"
+				}
+			}
+		}
+	}
 	models.Order.findAll({
-		raw: true
+		raw: true,
+		where: order_where,
+		order:[["updatedAt", "DESC"]]
 	}).then((orders) => {
-		res.send(orders);
+		if(orders.length > 0){
+			models.Buyer.findAll({
+				raw: true,
+				attributes: ["name", "OrderId"]
+			}).then((buyers) => {
+				models.Seller.findAll({
+					attributes: ["name", "OrderId"],
+					raw: true
+				}).then((sellers) => {
+					lodash.forEach(orders, function(order){
+						order.buyers = lodash.map(lodash.filter(buyers, {
+							OrderId: order.id
+						}), "name");
+						order.sellers = lodash.map(lodash.filter(sellers, {
+							OrderId: order.id
+						}), "name");	
+					});
+					res.send(orders);
+				}).catch((err) => {
+					res.status(500).send(err.stack);
+				});
+			}).catch((err) => {
+				res.status(500).send(err.stack);
+			});
+		}
+		else{
+			res.send([]);
+		}
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
@@ -287,7 +335,6 @@ app.get("/api/order/:id", function(req, res){
 		models.Buyer.findAll({
 			where:{
 				OrderId: order.id
-				
 			},
 			raw: true,
 			attributes: ["name", "address"]
