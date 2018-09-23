@@ -38,7 +38,7 @@ export class OrderComponent implements OnInit {
 	}];
 	public invoice: any = {
 	};
-	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) { }
+	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) {}
 	scrollToBottom(): void {
 		try {
 			setTimeout(() => {
@@ -57,9 +57,6 @@ export class OrderComponent implements OnInit {
 		});
 		this.http.get("/api/order/" + this.id).subscribe((val) => {
 			this.order = val;
-			this.order.lastUpdated = moment(this.order.updatedAt).format("dddd, MMMM Do YYYY hh:mm A");
-			this.order.dateofCreation = moment(this.order.createdAt).format("dddd, MMMM Do YYYY hh:mm A");
-			this.order.closed_date = this.order.closed_date ? moment(this.order.closed_date).format("dddd, MMMM Do YYYY hh:mm A") : null;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -118,7 +115,7 @@ export class OrderComponent implements OnInit {
 			$("#confirmModal").modal("hide");
 			setTimeout(() => {
 				this.order.closed = true;
-				this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
+				this.order.updatedAt = new Date();
 				this.spinner.hide();
 			}, 2000);
 		}, response => {
@@ -158,7 +155,7 @@ export class OrderComponent implements OnInit {
 			console.log("PUT call successful value returned in body", val);
 			setTimeout(() => {
 				this.inEditMode = false;
-				this.order.lastUpdated = moment().format("dddd, MMMM Do YYYY hh:mm A");
+				this.order.updatedAt = new Date();
 				this.spinner.hide();
 			}, 2000);
 		}, response => {

@@ -37,7 +37,7 @@
 		<div class="card-header" *ngIf="order.closed" style="background-color: #ff7979;">
 			<div class="row">
 				<div class="col-6">Closed</div>
-				<div class="col-6 text-right">Closed {{order.closed_date}}</div>
+				<div class="col-6 text-right">Closed {{order.closed_date | date:'EEEE, MMMM d yyyy hh:mm a'}}</div>
 			</div>
 		</div>
 		<div class="card-body text-left">
@@ -332,8 +332,8 @@
 		</div>
 		<div class="card-footer text-muted">
 			<div class="row">
-				<div class="col-6">Last Updated {{order.lastUpdated}}</div>
-				<div class="col-6 text-right">Created {{order.dateofCreation}}</div>
+				<div class="col-6">Last Updated {{order.updatedAt | date:'EEEE, MMMM d yyyy hh:mm a'}}</div>
+				<div class="col-6 text-right">Created {{order.createdAt | date:'EEEE, MMMM d yyyy hh:mm a'}}</div>
 			</div>
 		</div>
 	</div>
