@@ -565,7 +565,7 @@ app.post("/api/order/:id/forward", authToken, function(req, res){
 	});
 });
 
-app.get("/api/document/:id", authToken, function(req, res){
+app.get("/api/document/:id", function(req, res){
 	models.Document.find({
 		where:{
 			id: req.params.id
