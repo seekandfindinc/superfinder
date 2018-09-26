@@ -595,7 +595,7 @@ app.get("/api/documents/:id", authToken, function(req, res){
 	});
 });
 
-app.post("/api/document", authToken, upload.single("file"), function(req, res){
+app.post("/api/document", [authToken, upload.single("file")], function(req, res){
 	models.Document.create({
 		filename: req.file.originalname,
 		description: req.body.description,
