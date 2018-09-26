@@ -29,6 +29,7 @@ const transporter = nodemailer.createTransport({
 });
 const pdfmake = require("pdfmake");
 const Sequelize = require("sequelize");
+const jwt = require("jsonwebtoken");
 
 http.createServer(function (req, res) {
 	var header = req.headers["host"];
@@ -43,22 +44,21 @@ https.createServer({
 	cert: config.cert
 }, app).listen(config.ssl_port, config.web_host);
 
+let authToken = function(req, res, next){
+	if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'){
+		return next();
+    } else {
+    	return res.send(401);
+    }
+};
+
 app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", express.static("./dist/superfinder/"));
 
-app.get("/api/user", [
-	check("email").isEmail(),
-	check("password").isLength({
-		min: 1
-	})
-], function(req, res){
-	const errors = validationResult(req);
-	if(!errors.isEmpty()){
-		return res.status(422).json({ errors: errors.array() });
-	};
+app.get("/api/user", function(req, res){
 	models.User.find({
 		where:{
 			email: req.query.email,
@@ -68,17 +68,14 @@ app.get("/api/user", [
 	}).then((user) => {
 		if(user){
 			if(bcrypt.compareSync(req.query.password, user.password)){
-				res.send({
-					id: user.id,
-					email: user.email,
-					initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
+				let token = jwt.sign(user, "secretKey");
+				res.json({
+					token: token
 				});
-			}
-			else{
+			} else {
 				res.send(false);
 			}
-		}
-		else{
+		} else {
 			res.send(false);
 		}
 	}).catch((err) => {
@@ -86,7 +83,7 @@ app.get("/api/user", [
 	});
 });
 
-app.put("/api/user", function(req, res){
+app.put("/api/user", authToken, function(req, res){
 	if(req.body.password){
 		models.User.update({
 			password: bcrypt.hashSync(req.body.password, 10)
@@ -116,7 +113,7 @@ app.put("/api/user", function(req, res){
 	}
 });
 
-app.get("/api/users", function(req, res){
+app.get("/api/users", authToken, function(req, res){
 	models.User.findAll({
 		raw: true,
 		attributes: ["id", "email", "approved", "createdAt", "updatedAt", "deletedAt", "first_name", "last_name"]
@@ -267,7 +264,7 @@ app.post("/api/register", [
 	});
 });
 
-app.get("/api/order", function(req, res){
+app.get("/api/order", authToken, function(req, res){
 	let order_where = {};
 	if(req.query){
 		for(let item in req.query){
@@ -325,7 +322,7 @@ app.get("/api/order", function(req, res){
 	});
 });
 
-app.get("/api/order/:id", function(req, res){
+app.get("/api/order/:id", authToken, function(req, res){
 	models.Order.find({
 		where:{
 			id: req.params.id
@@ -360,7 +357,7 @@ app.get("/api/order/:id", function(req, res){
 	});
 });
 
-app.put("/api/order/:id", function(req, res){
+app.put("/api/order/:id", authToken, function(req, res){
 	models.Order.update(req.body,{
 		where:{
 			id: req.params.id
@@ -411,7 +408,7 @@ app.put("/api/order/:id", function(req, res){
 	});
 });
 
-app.post("/api/order", function(req, res){
+app.post("/api/order", authToken, function(req, res){
 	models.Order.create({
 		property_address: req.body.propertyAddress,
 		reference_number: req.body.referenceNumber,
@@ -440,7 +437,7 @@ app.post("/api/order", function(req, res){
 	});
 });
 
-app.get("/api/order/:id/notes", function(req, res){
+app.get("/api/order/:id/notes", authToken, function(req, res){
 	models.Note.belongsTo(models.User, {foreignKey: "UserId", targetKey: "id"}); 
 	models.Note.findAll({
 		where:{
@@ -461,7 +458,7 @@ app.get("/api/order/:id/notes", function(req, res){
 	});
 });
 
-app.post("/api/order/:id/note", function(req, res){
+app.post("/api/order/:id/note", authToken, function(req, res){
 	models.Note.create({
 		text: req.body.text,
 		UserId: req.body.UserId,
@@ -473,7 +470,7 @@ app.post("/api/order/:id/note", function(req, res){
 	});
 });
 
-app.get("/api/order/:id/forwards", function(req, res){
+app.get("/api/order/:id/forwards", authToken, function(req, res){
 	models.OrderForward.findAll({
 		where:{
 			OrderId: req.params.id
@@ -487,7 +484,7 @@ app.get("/api/order/:id/forwards", function(req, res){
 	});
 });
 
-app.post("/api/order/:id/forward", function(req, res){
+app.post("/api/order/:id/forward", authToken, function(req, res){
 	models.Order.find({
 		where:{
 			id: req.params.id
@@ -563,7 +560,7 @@ app.post("/api/order/:id/forward", function(req, res){
 	});
 });
 
-app.get("/api/document/:id", function(req, res){
+app.get("/api/document/:id", authToken, function(req, res){
 	models.Document.find({
 		where:{
 			id: req.params.id
@@ -583,7 +580,7 @@ app.get("/api/document/:id", function(req, res){
 	});
 });
 
-app.get("/api/documents/:id", function(req, res){
+app.get("/api/documents/:id", authToken, function(req, res){
 	models.Document.findAll({
 		where:{
 			OrderId: req.params.id
@@ -598,7 +595,7 @@ app.get("/api/documents/:id", function(req, res){
 	});
 });
 
-app.post("/api/document", upload.single("file"), function(req, res){
+app.post("/api/document", authToken, upload.single("file"), function(req, res){
 	models.Document.create({
 		filename: req.file.originalname,
 		description: req.body.description,
@@ -611,7 +608,7 @@ app.post("/api/document", upload.single("file"), function(req, res){
 	});
 });
 
-app.get("/api/invoice/:orderid", function(req, res){
+app.get("/api/invoice/:orderid", authToken, function(req, res){
 	models.Invoice.find({
 		where:{
 			OrderId: req.params.orderid,
@@ -638,7 +635,7 @@ app.get("/api/invoice/:orderid", function(req, res){
 	});
 });
 
-app.post("/api/invoice/:orderid", function(req, res){
+app.post("/api/invoice/:orderid", authToken, function(req, res){
 	var items = req.body;
 	var total_cost = 0;
 	lodash.forEach(items, function(item){
@@ -860,7 +857,7 @@ app.post("/api/invoice/:orderid", function(req, res){
 	});
 });
 
-app.put("/api/invoice/:id", function(req, res){
+app.put("/api/invoice/:id", authToken, function(req, res){
 	models.Invoice.update(req.body,{
 		where:{
 			id: req.params.id
@@ -871,7 +868,6 @@ app.put("/api/invoice/:id", function(req, res){
 		res.status(500).send(err.stack);
 	});
 });
-
 
 app.get("/*", function(req,res){
 	res.sendFile(path.resolve(__dirname + "/dist/superfinder/index.html"));
