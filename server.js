@@ -64,13 +64,18 @@ app.get("/api/user", function(req, res){
 			email: req.query.email,
 			approved: true
 		},
-		raw: true
+		raw: true,
+		attributes: ["id", "first_name", "last_name", "password"]
 	}).then((user) => {
 		if(user){
 			if(bcrypt.compareSync(req.query.password, user.password)){
 				let token = jwt.sign(user, "secretKey");
 				res.json({
-					token: token
+					token: token,
+					user: {
+						id: user.id,
+						initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
+					}
 				});
 			} else {
 				res.send(false);

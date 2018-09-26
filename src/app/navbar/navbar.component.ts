@@ -15,6 +15,7 @@ export class NavbarComponent implements OnInit {
 	constructor(private router: Router, private http: HttpClient, private spinner: NgxSpinnerService, private cookieService: CookieService) { }
 	ngOnInit() {}
 	logout(){
+		localStorage.removeItem("currentUser");
 		this.cookieService.delete("user");
 		this.router.navigate(["/admin"]);
 	}

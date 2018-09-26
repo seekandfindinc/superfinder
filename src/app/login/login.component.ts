@@ -40,7 +40,10 @@ export class LoginComponent implements OnInit {
 			}
 		}).subscribe((val) => {
 			if(val){
-				this.cookieService.set("user", val.token);
+				let token = val["token"];
+				let user = val["user"];
+				this.cookieService.set("user", token);
+				localStorage.setItem("currentUser", user);
 				this.router.navigate(["/admin/dashboard"]);
 			} else {
 				alert("Try again. Invalid Login");
