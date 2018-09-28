@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
 		}).subscribe((val) => {
 			if(val){
 				let token = val["token"];
-				let user = val["user"];
+				let user = JSON.stringify(val["user"]);
 				this.cookieService.set("user", token);
 				localStorage.setItem("currentUser", user);
 				this.router.navigate(["/admin/dashboard"]);
