@@ -200,15 +200,16 @@ export class OrderComponent implements OnInit {
 		formData.append("OrderId", id);
 		this.http.post("/api/document/", formData).subscribe((val) => {
 			console.log("PUT call successful value returned in body", val);
+			console.log("POST call successful value returned in body", val);
 			$("#newDocumentModal").modal("hide");
 			setTimeout(() => {
 				this.getDocuments();
 				this.spinner.hide();
 			}, 2000);			
 		}, response => {
-			console.log("PUT call in error", response)
+			console.log("POST call in error", response)
 		}, () => {
-			console.log("The PUT observable is now completed.");
+			console.log("The POST observable is now completed.");
 		});
 	}
 	download(id){

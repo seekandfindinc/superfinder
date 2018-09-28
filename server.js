@@ -31,6 +31,11 @@ const pdfmake = require("pdfmake");
 const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
 
+
+process.stdout.on( 'error', function ( err ) {
+	console.log(err)
+} );
+
 http.createServer(function (req, res) {
 	var header = req.headers["host"];
 	res.writeHead(307, {
