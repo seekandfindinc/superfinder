@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
 	selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
 	password: string;
 	first_name: string;
 	last_name: string;
-	constructor(private http: HttpClient, private router: Router) { }
+	constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
 	ngOnInit() {
 	}
 	newUserSubmit() {
@@ -38,12 +39,13 @@ export class LoginComponent implements OnInit {
 				password: this.password
 			}
 		}).subscribe((val) => {
-			console.log("GET call successful value returned in body", val);
 			if(val){
-				localStorage.setItem("currentUser", JSON.stringify(val));
+				let token = val["token"];
+				let user = JSON.stringify(val["user"]);
+				this.cookieService.set("user", token);
+				localStorage.setItem("currentUser", user);
 				this.router.navigate(["/admin/dashboard"]);
-			}
-			else{
+			} else {
 				alert("Try again. Invalid Login");
 			}
 		}, response => {

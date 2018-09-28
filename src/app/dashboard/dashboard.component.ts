@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
 		let params = new URLSearchParams();
 		for(let key in filter_values){
 			if(filter_values[key]){
-				params.set(key, filter_values[key])
+				key === "closing_date" ? params.set(key, filter_values[key].year + "-" + filter_values[key].month + "-" + filter_values[key].day) : params.set(key, filter_values[key]);
 			}
 		}
 		this.http.get("/api/order" + (params.toString().length > 0 ? "?" + params.toString() : "")).subscribe((val) => {

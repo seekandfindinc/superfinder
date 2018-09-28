@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from "@angular/common/http";
 import { NgxSpinnerService } from 'ngx-spinner';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
 	selector: 'app-navbar',
@@ -11,10 +12,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class NavbarComponent implements OnInit {
 	new_password: string;
 	new_password_confirm: string;
-	constructor(private router: Router, private http: HttpClient, private spinner: NgxSpinnerService) { }
+	constructor(private router: Router, private http: HttpClient, private spinner: NgxSpinnerService, private cookieService: CookieService) { }
 	ngOnInit() {}
 	logout(){
 		localStorage.removeItem("currentUser");
+		this.cookieService.delete("user");
 		this.router.navigate(["/admin"]);
 	}
 	savePassword(){

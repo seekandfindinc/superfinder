@@ -18,6 +18,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './user/user.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { OrderNewComponent } from './order-new/order-new.component';
+import { CookieService } from 'ngx-cookie-service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './token.interceptor';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -68,7 +71,11 @@ const appRoutes: Routes = [{
 		NgbModule,
 		NgxSpinnerModule
 	],
-	providers: [],
+	providers: [CookieService, {
+		provide: HTTP_INTERCEPTORS,
+		useClass: TokenInterceptor,
+		multi: true
+	}],
 	bootstrap: [AppComponent]
 })
 export class AppModule { }
