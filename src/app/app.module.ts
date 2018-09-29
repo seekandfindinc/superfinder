@@ -21,6 +21,7 @@ import { OrderNewComponent } from './order-new/order-new.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
+import { MarketingComponent } from './marketing/marketing.component';
 
 const appRoutes: Routes = [{
 	path: "admin",
@@ -46,8 +47,7 @@ const appRoutes: Routes = [{
 	component: ForgotComponent
 },{
 	path: "",
-	redirectTo: "/admin",
-	pathMatch: "full"
+	component: MarketingComponent
 }];
 
 @NgModule({
@@ -61,7 +61,8 @@ const appRoutes: Routes = [{
 		ForgotComponent,
 		UserComponent,
 		TimeAgoPipe,
-		OrderNewComponent
+		OrderNewComponent,
+		MarketingComponent
 	],
 	imports: [
 		BrowserModule,
