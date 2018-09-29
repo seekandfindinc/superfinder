@@ -65,16 +65,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let field of order.buyerFieldArray; index as i;">
-							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyerFieldArray[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyerFieldArray[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+						<tr *ngFor="let field of order.buyers; index as i;">
+							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td colspan="2">
-								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
-								<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
+								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="add('buyers')">Add Buyer</button>
+								<button type="button" [disabled]="order.buyers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('buyers')">Remove Buyer</button>
 							</td>
 						</tr>
 					</tfoot>
@@ -90,16 +90,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let field of order.sellerFieldArray; index as i;">
-							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellerFieldArray[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellerFieldArray[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+						<tr *ngFor="let field of order.sellers; index as i;">
+							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td colspan="2">
-								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
-								<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
+								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="add('sellers')">Add Seller</button>
+								<button type="button" [disabled]="order.sellers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('sellers')">Remove Seller</button>
 							</td>
 						</tr>
 					</tfoot>
