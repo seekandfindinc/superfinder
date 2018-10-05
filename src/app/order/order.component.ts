@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
 import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
+import { InvoiceItems } from "../invoice-items";
 
 @Component({
 	selector: 'app-order',
@@ -13,9 +14,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class OrderComponent implements OnInit {
 	@ViewChild("noteList") private myScrollContainer: ElementRef;
 	id: number;
-	public buyer_index: number;
-	public seller_index: number;
-	public invoices_item_index: number = 0;
 	inEditMode: boolean = false;
 	public forward: any = {
 	};
@@ -31,7 +29,7 @@ export class OrderComponent implements OnInit {
 	};
 	public documents: any = [
 	];
-	public invoice_items: any = [{
+	public invoice_items: InvoiceItems[] = [{
 		item: null,
 		unit: null,
 		cost: null
@@ -126,8 +124,6 @@ export class OrderComponent implements OnInit {
 	}
 	editOrder(){
 		this.inEditMode = true;
-		this.buyer_index = this.order.buyers.length - 1;
-		this.seller_index = this.order.sellers.length - 1;
 		if(this.order.closing_date){
 			this.temp_closing_date.date = {
 				year: parseInt(moment(this.order.closing_date).format("YYYY")),
@@ -169,10 +165,8 @@ export class OrderComponent implements OnInit {
 			name: null,
 			address: null
 		});
-		this.buyer_index++;
 	}
 	deleteBuyer() {
-		this.buyer_index--;
 		this.order.buyers.splice(-1, 1);
 	}
 	addSeller() {
@@ -180,10 +174,8 @@ export class OrderComponent implements OnInit {
 			name: null,
 			address: null
 		});
-		this.seller_index++;
 	}
 	deleteSeller() {
-		this.seller_index--;
 		this.order.sellers.splice(-1, 1);
 	}
 	onFileChange(event) {
@@ -236,10 +228,8 @@ export class OrderComponent implements OnInit {
 			unit: null,
 			cost: null
 		});
-		this.invoices_item_index++;
 	}
 	deleteItem() {
-		this.invoices_item_index--;
 		this.invoice_items.splice(-1, 1);
 	}
 	invoiceSubmit(id){

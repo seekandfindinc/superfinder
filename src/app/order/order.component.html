@@ -155,7 +155,7 @@
 										<tr>
 											<td colspan="2">
 												<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addBuyer()">Add Buyer</button>
-												<button type="button" [disabled]="buyer_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
+												<button type="button" [disabled]="order.buyers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="deleteBuyer()">Remove Buyer</button>
 											</td>
 										</tr>
 									</tfoot>
@@ -189,7 +189,7 @@
 										<tr>
 											<td colspan="2">
 												<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addSeller()">Add Seller</button>
-												<button type="button" [disabled]="seller_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
+												<button type="button" [disabled]="order.sellers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="deleteSeller()">Remove Seller</button>
 											</td>
 										</tr>
 									</tfoot>
@@ -434,7 +434,7 @@
 							<tr>
 								<td colspan="3">
 									<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addItem()">Add Item</button>
-									<button type="button" [disabled]="invoices_item_index === 0" class="btn btn-dark btn-block btn-sm" (click)="deleteItem()">Remove Item</button>
+									<button type="button" [disabled]="invoice_items.length === 1" class="btn btn-dark btn-block btn-sm" (click)="deleteItem()">Remove Item</button>
 								</td>
 							</tr>
 							<tr>
