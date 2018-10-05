@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from "@angular/common/http";
+import { Order } from "../order";
 
 @Component({
 	selector: 'app-order-new',
@@ -8,41 +9,34 @@ import { HttpClient } from "@angular/common/http";
 	styleUrls: ['./order-new.component.css']
 })
 export class OrderNewComponent implements OnInit {
-	public order: any = {
-		buyerFieldArray: [{
+	public order: Order = {
+		lender: null,
+		loan_amount: null,
+		purchase_price: null,
+		property_address: null,
+		corporation: null,
+		reference_number: null,
+		buyers: [{
 			name: null,
 			address: null
 		}],
-		sellerFieldArray: [{
+		sellers: [{
 			name: null,
 			address: null
 		}]
 	};
-	public buyer_index: number = 0;
-	public seller_index: number = 0;
-	constructor(private router: Router, private http: HttpClient) { }
-	ngOnInit(){}
-	addBuyer() {
-		this.order.buyerFieldArray.push({
+	constructor(private router: Router, private http: HttpClient) {
+	}
+	ngOnInit(){
+	}
+	add(list){
+		this.order[list].push({
 			name: null,
 			address: null
 		});
-		this.buyer_index++;
 	}
-	deleteBuyer() {
-		this.buyer_index--;
-		this.order.buyerFieldArray.splice(-1, 1);
-	}
-	addSeller() {
-		this.order.sellerFieldArray.push({
-			name: null,
-			address: null
-		});
-		this.seller_index++;
-	}
-	deleteSeller() {
-		this.seller_index--;
-		this.order.sellerFieldArray.splice(-1, 1);
+	delete(list){
+		this.order[list].splice(-1, 1);
 	}
 	orderSubmit(){
 		this.http.post("/api/order", this.order).subscribe((val) => {
