@@ -5,6 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
 import { InvoiceItems } from "../invoice-items";
+import { Document } from "../document";
+import { Forward } from "../forward";
+import { Note } from "../note";
+
 
 @Component({
 	selector: 'app-order',
@@ -15,15 +19,19 @@ export class OrderComponent implements OnInit {
 	@ViewChild("noteList") private myScrollContainer: ElementRef;
 	id: number;
 	inEditMode: boolean = false;
-	public forward: any = {
-	};
 	public forwards: any = [];
 	public notes: any = [];
 	public order: any = {
 	};
-	public note: any = {
+	public note: Note = {
+		text: null
 	};
-	public document: any = {
+	public forward: Forward = {
+		email: null
+	};
+	public document: Document = {
+		description: null,
+		file: null
 	};
 	public temp_closing_date: any = {
 	};
@@ -160,23 +168,14 @@ export class OrderComponent implements OnInit {
 			console.log("The PUT observable is now completed.");
 		});
 	}
-	addBuyer() {
-		this.order.buyers.push({
+	add(list) {
+		this.order[list].push({
 			name: null,
 			address: null
 		});
 	}
-	deleteBuyer() {
-		this.order.buyers.splice(-1, 1);
-	}
-	addSeller() {
-		this.order.sellers.push({
-			name: null,
-			address: null
-		});
-	}
-	deleteSeller() {
-		this.order.sellers.splice(-1, 1);
+	delete(list) {
+		this.order[list].splice(-1, 1);
 	}
 	onFileChange(event) {
 		if(event.target.files.length > 0) {
