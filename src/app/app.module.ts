@@ -1,6 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
 import { HttpClientModule, HttpHandler } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from "./app.component";
@@ -21,34 +20,8 @@ import { OrderNewComponent } from './order-new/order-new.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
-
-const appRoutes: Routes = [{
-	path: "admin",
-	component: LoginComponent
-},{
-	path: "admin/dashboard",
-	component: DashboardComponent,
-	canActivate: [AuthGuard]
-},{
-	path: "admin/dashboard/order/:orderid",
-	component: OrderComponent,
-	canActivate: [AuthGuard]
-},{
-	path: "admin/dashboard/create/order",
-	component: OrderNewComponent,
-	canActivate: [AuthGuard]
-},{
-	path: "admin/users",
-	component: UserComponent,
-	canActivate: [AuthGuard]
-},{
-	path: "admin/user/forgot",
-	component: ForgotComponent
-},{
-	path: "",
-	redirectTo: "/admin",
-	pathMatch: "full"
-}];
+import { MarketingComponent } from './marketing/marketing.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
 	declarations: [
@@ -61,15 +34,16 @@ const appRoutes: Routes = [{
 		ForgotComponent,
 		UserComponent,
 		TimeAgoPipe,
-		OrderNewComponent
+		OrderNewComponent,
+		MarketingComponent
 	],
 	imports: [
 		BrowserModule,
-		RouterModule.forRoot(appRoutes,{enableTracing: false}),
 		HttpClientModule,
 		FormsModule,
 		NgbModule,
-		NgxSpinnerModule
+		NgxSpinnerModule,
+		AppRoutingModule
 	],
 	providers: [CookieService, {
 		provide: HTTP_INTERCEPTORS,
