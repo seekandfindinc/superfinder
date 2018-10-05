@@ -415,21 +415,21 @@ app.put("/api/order/:id", authToken, function(req, res){
 
 app.post("/api/order", authToken, function(req, res){
 	models.Order.create({
-		property_address: req.body.propertyAddress,
-		reference_number: req.body.referenceNumber,
+		property_address: req.body.property_address,
+		reference_number: req.body.reference_number,
 		lender: req.body.lender,
 		corporation: req.body.corporation,
-		purchase_price: req.body.purchasePrice,
-		loan_amount: req.body.loanAmount
+		purchase_price: req.body.purchase_price,
+		loan_amount: req.body.loan_amount
 	}).then((order) => {
-		lodash.forEach(req.body.buyerFieldArray, function(buyer){
+		lodash.forEach(req.body.buyers, function(buyer){
 			buyer.OrderId = order.id;
 		});
-		lodash.forEach(req.body.sellerFieldArray, function(seller){
+		lodash.forEach(req.body.sellers, function(seller){
 			seller.OrderId = order.id;
 		});
-		models.Buyer.bulkCreate(req.body.buyerFieldArray).then((buyers) => {
-			models.Seller.bulkCreate(req.body.sellerFieldArray).then((sellers) => {
+		models.Buyer.bulkCreate(req.body.buyers).then((buyers) => {
+			models.Seller.bulkCreate(req.body.sellers).then((sellers) => {
 				return res.send(order);
 			}).catch((err) => {
 				return res.status(500).send(err.stack);
