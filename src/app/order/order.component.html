@@ -62,23 +62,23 @@
 					<br>
 					<form class="was-validated" #editOrderForm="ngForm">
 						<div class="row">
-							<div class="col">
+							<div class="col-6">
 								<div class="font-weight-bold">Reference Number</div>
 								<div class="font-weight-light" *ngIf="!inEditMode">{{order.reference_number ? order.reference_number : "-"}}</div>
 								<input type="text" *ngIf="inEditMode" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number">
 							</div>
-							<div class="col">
+							<div class="col-2">
 								<div class="font-weight-bold">Closing Date</div>
-								<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "EEEE, LLLL d, yyyy @ hh:mm a") : "TBD"}}</div>
-								<div class="input-group input-group-sm" *ngIf="inEditMode">
-									<input class="form-control form-control-sm" placeholder="yyyy-mm-dd" name="temp_closing_date" [(ngModel)]="temp_closing_date.date" ngbDatepicker #d="ngbDatepicker">
-									<div class="input-group-append">
-										<button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
-										<i class="far fa-calendar-alt"></i>
-										</button>
-									</div>
-								</div>
-								<ngb-timepicker name="time" [(ngModel)]="temp_closing_date.time" *ngIf="inEditMode" [hourStep]="1" [minuteStep]="15"></ngb-timepicker>
+								<div class="font-weight-light" *ngIf="!inEditMode">{{order.closing_date ? (order.closing_date | date : "yyyy-MM-dd") : "TBD"}}</div>
+								<input *ngIf="inEditMode" type="number" class="form-control form-control-sm" placeholder="YYYY" name="closing_date_year" [(ngModel)]="order.closing_date.year">
+							</div>
+							<div class="col-2">
+								<br>
+								<input *ngIf="inEditMode" type="number" class="form-control form-control-sm" min="1" max="12" placeholder="MM" name="closing_date_month" [(ngModel)]="order.closing_date.month">
+							</div>
+							<div class="col-2">
+								<br>
+								<input *ngIf="inEditMode" type="number" class="form-control form-control-sm" min="1" max="31" placeholder="DD" name="closing_date_day" [(ngModel)]="order.closing_date.day">
 							</div>
 						</div>
 						<br>

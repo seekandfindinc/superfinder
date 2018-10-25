@@ -33,7 +33,7 @@ export class OrderComponent implements OnInit {
 		description: null,
 		file: null
 	};
-	public temp_closing_date: any = {
+	public closing_date: any = {
 	};
 	public documents: any = [
 	];
@@ -133,32 +133,35 @@ export class OrderComponent implements OnInit {
 	editOrder(){
 		this.inEditMode = true;
 		if(this.order.closing_date){
-			this.temp_closing_date.date = {
-				year: parseInt(moment(this.order.closing_date).format("YYYY")),
-				month: parseInt(moment(this.order.closing_date).format("MM")),
-				day: parseInt(moment(this.order.closing_date).format("DD"))
+			this.order.closing_date = {
+				year: moment(this.order.closing_date).format("YYYY"),
+				month: moment(this.order.closing_date).format("M"),
+				day: moment(this.order.closing_date).format("D")
 			};
-			this.temp_closing_date.time = {
-				hour: parseInt(moment(this.order.closing_date).format("HH")),
-				minute: parseInt(moment(this.order.closing_date).format("mm"))
+		}
+		else{
+			this.order.closing_date = {
+				year: null,
+				month: null,
+				day: null
 			};
 		}
 	}
 	saveOrder(){
 		this.spinner.show();
-		if(this.temp_closing_date.date){
+		this.inEditMode = false;
+		if(this.order.closing_date.year){
 			this.order.closing_date = moment({
-				year: this.temp_closing_date.date.year,
-				month: this.temp_closing_date.date.month - 1,
-				day: this.temp_closing_date.date.day,
-				hour: this.temp_closing_date.time.hour,
-				minute: this.temp_closing_date.time.minute
-			}).format("YYYY-MM-DD HH:mm:ss");
+				year: this.order.closing_date.year,
+				month: this.order.closing_date.month - 1,
+				day: this.order.closing_date.day,
+			}).format("YYYY-MM-DD 00:00:00");
+		} else {
+			this.order.closing_date = null;
 		}
 		this.http.put("/api/order/" + this.id, this.order).subscribe((val) => {
 			console.log("PUT call successful value returned in body", val);
 			setTimeout(() => {
-				this.inEditMode = false;
 				this.order.updatedAt = new Date();
 				this.spinner.hide();
 			}, 2000);
