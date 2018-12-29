@@ -28,9 +28,6 @@
 				<li class="nav-item">
 					<a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" (click)="scrollToBottom()">Notes</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" id="invoice-tab" data-toggle="tab" href="#invoice" role="tab" aria-controls="invoice" (click)="scrollToBottom()">Invoice</a>
-				</li>
 			</ul>
 		</div>
 		<div class="card-header" *ngIf="!order.closed" style="background-color: #2ed573;">Open</div>
@@ -282,52 +279,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="invoice" role="tabpanel" aria-labelledby="invoice-tab">
-					<div class="btn-toolbar" role="toolbar" *ngIf="!invoice && !order.closed">
-						<div class="btn-group mr-2" role="group">
-							<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#generateInvoiceModal">Generate Invoice</button>
-						</div>
-					</div>
-					<table class="table table-bordered" *ngIf="invoice">
-						<thead class="thead-light">
-							<tr>
-								<th colspan="4"><b>Invoice Number</b>: {{invoice.number}}</th>
-							</tr>
-							<tr>
-								<th colspan="4"><b>Status</b>: <span [ngClass]="invoice.payed_date ? 'text-success' : 'text-warning'">{{invoice.payed_date ? 'Paid in Full' : 'Not Paid'}}</span></th>
-							</tr>
-							<tr>
-								<th class="text-center" scope="col">Description</th>
-								<th class="text-center" scope="col">Unit(s)</th>
-								<th class="text-right" scope="col">Unit Price</th>
-								<th class="text-right" scope="col">Total Price</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr *ngFor="let item of invoice.items">
-								<td class="text-center">{{item.item}}</td>
-								<td class="text-center">{{item.unit}}</td>
-								<td class="text-right">{{item.cost | currency}}</td>
-								<td class="text-right">{{item.total_cost | currency}}</td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td class="text-right" colspan="3"><b>Sub-Total</b></td>
-								<td class="text-right"><b>{{invoice.sub_total | currency}}</b></td>
-							</tr>
-							<tr>
-								<td class="text-right" colspan="3"><b>Taxes</b></td>
-								<td class="text-right"><b>{{invoice.sales_tax | currency}}</b></td>
-							</tr>
-							<tr>
-								<td class="text-right" colspan="3"><b>Total</b></td>
-								<td class="text-right"><b>{{invoice.total | currency}}</b></td>
-							</tr>
-						</tfoot>
-					</table>
-					<button type="button" class="btn btn-success btn-md btn-block" *ngIf="invoice && !invoice.payed_date" (click)="markPaid(invoice.id)">Mark Paid</button>
-				</div>
 			</div>
 		</div>
 		<div class="card-footer text-muted">
@@ -401,50 +352,6 @@
 				</div>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-primary" [disabled]="forwardForm.form.invalid">Send</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="generateInvoiceModal" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<form class="was-validated" (ngSubmit)="invoiceSubmit(order.id)" #invoiceForm="ngForm">
-				<div class="modal-header">
-					<h5 class="modal-title">Enter Invoice Items</h5>
-				</div>
-				<div class="modal-body">
-					<table class="table table-bordered">
-						<thead>
-							<tr>
-								<th>Item</th>
-								<th>Unit</th>
-								<th>Cost</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr *ngFor="let field of invoice_items; index as i;">
-								<td><input type="text" required class="form-control form-control-sm" name="item_{{i}}" placeholder="Description of Service" [(ngModel)]="field.item"><div class="invalid-feedback">Please add item</div></td>
-								<td><input type="number" min="1" max="999" step="1" required class="form-control form-control-sm" name="unit_{{i}}" placeholder="1" [(ngModel)]="field.unit"><div class="invalid-feedback">Please add unit</div></td>
-								<td><input type="number" min="0.01" max="9999.99" step="0.01" required class="form-control form-control-sm" name="cost_{{i}}" placeholder="250.00" [(ngModel)]="field.cost"><div class="invalid-feedback">Please add cost</div></td>
-							</tr>
-						</tbody>
-						<tfoot>
-							<tr>
-								<td colspan="3">
-									<button type="button" class="btn btn-dark btn-block btn-sm" (click)="addItem()">Add Item</button>
-									<button type="button" [disabled]="invoice_items.length === 1" class="btn btn-dark btn-block btn-sm" (click)="deleteItem()">Remove Item</button>
-								</td>
-							</tr>
-							<tr>
-								<td class="text-center" colspan="3"><i>All items are subject to NYS Sales Tax (8.875%)</i></td>
-							</tr>
-						</tfoot>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary" [disabled]="invoiceForm.form.invalid">Send</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 				</div>
 			</form>

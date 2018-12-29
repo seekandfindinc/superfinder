@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { URLSearchParams } from "@angular/http";
-import { TimeAgoPipe } from 'time-ago-pipe';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

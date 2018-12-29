@@ -15,7 +15,6 @@ import * as bootstrap from "bootstrap";
 import { ForgotComponent } from './forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './user/user.component';
-import { TimeAgoPipe } from 'time-ago-pipe';
 import { OrderNewComponent } from './order-new/order-new.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -33,7 +32,6 @@ import { AppRoutingModule } from './app-routing.module';
 		SearchPipe,
 		ForgotComponent,
 		UserComponent,
-		TimeAgoPipe,
 		OrderNewComponent,
 		MarketingComponent
 	],

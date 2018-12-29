@@ -65,7 +65,7 @@
 		<a [routerLink]="['/admin/dashboard/order', order.id]" class="list-group-item list-group-item-action flex-column align-items-start {{order.closed ? 'list-group-item-danger' : 'list-group-item-success'}}" *ngFor="let order of orders">
 			<div class="d-flex w-100 justify-content-between">
 				<h5 class="mb-1">{{order.property_address}}</h5>
-				<small>Last Updated {{order.updatedAt | timeAgo}}</small>
+				<small>Last Updated {{order.updatedAt | date:'EEEE, MMMM d yyyy hh:mm a'}}</small>
 			</div>
 			<p class="mb-1">{{order.corporation}}</p>
 			<small>
