@@ -1,27 +1,27 @@
 <br>
 <div class="container">
 	<app-navbar></app-navbar>
-	<form class="was-validated" (ngSubmit)="orderSubmit()" #newOrderForm="ngForm">
+	<form class="was-validated" (ngSubmit)="orderSubmit(propertyAddress, referenceNumber, lender, corporation, purchasePrice, loanAmount)" #newOrderForm="ngForm">
 		<div class="form-row">
 			<div class="col">
 				<label>Property</label>
-				<input type="text" required class="form-control form-control-sm" name="property_address" [(ngModel)]="order.property_address" placeholder="1 Apple Street, New York, NY 10001">
+				<input type="text" required class="form-control form-control-sm" #propertyAddress placeholder="1 Apple Street, New York, NY 10001">
 				<div class="invalid-feedback">Please add property address</div>
 			</div>
 			<div class="col">
 				<label>Reference #</label>
-				<input type="text" class="form-control form-control-sm" name="reference_number" [(ngModel)]="order.reference_number" placeholder="123456">
+				<input type="text" class="form-control form-control-sm" #referenceNumber placeholder="123456">
 			</div>
 		</div>
 		<br>
 		<div class="form-row">
 			<div class="col">
 				<label>Lender</label>
-				<input type="text" class="form-control form-control-sm" name="lender" [(ngModel)]="order.lender" placeholder="Bank of Awesome">
+				<input type="text" class="form-control form-control-sm" #lender placeholder="Bank of Awesome">
 			</div>
 			<div class="col">
 				<label>Corporation</label>
-				<input type="text" required class="form-control form-control-sm" name="corporation" [(ngModel)]="order.corporation" placeholder="Joe Schmo">
+				<input type="text" required class="form-control form-control-sm" #corporation placeholder="Joe Schmo">
 				<div class="invalid-feedback">Please add corporation</div>
 			</div>
 		</div>
@@ -33,7 +33,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">$</span>
 					</div>
-					<input type="number" required min="1" interval="1" class="form-control form-control-sm" name="purchase_price" [(ngModel)]="order.purchase_price">
+					<input type="number" required min="1" interval="1" class="form-control form-control-sm" #purchasePrice>
 					<div class="input-group-append">
 						<span class="input-group-text">.00</span>
 					</div>
@@ -46,7 +46,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">$</span>
 					</div>
-					<input type="number" min="1" interval="1" class="form-control form-control-sm" name="loan_amount" [(ngModel)]="order.loan_amount">
+					<input type="number" min="1" interval="1" class="form-control form-control-sm" #loanAmount>
 					<div class="input-group-append">
 						<span class="input-group-text">.00</span>
 					</div>
@@ -65,16 +65,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let field of order.buyers; index as i;">
-							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+						<tr *ngFor="let field of buyers; index as i;">
+							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="buyers[i].name" name="buyer_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="buyers[i].address" name="buyer_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td colspan="2">
 								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="add('buyers')">Add Buyer</button>
-								<button type="button" [disabled]="order.buyers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('buyers')">Remove Buyer</button>
+								<button type="button" [disabled]="buyers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('buyers')">Remove Buyer</button>
 							</td>
 						</tr>
 					</tfoot>
@@ -90,16 +90,16 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let field of order.sellers; index as i;">
-							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="order.sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
-							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="order.sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
+						<tr *ngFor="let field of sellers; index as i;">
+							<td><input type="text" required class="form-control form-control-sm" placeholder="Chris Jones" [(ngModel)]="sellers[i].name" name="seller_name_{{i}}"><div class="invalid-feedback">Please add name</div></td>
+							<td><input type="text" required class="form-control form-control-sm" placeholder="2 Apple Street, New York, NY 10001" [(ngModel)]="sellers[i].address" name="seller_address_{{i}}"><div class="invalid-feedback">Please add address</div></td>
 						</tr>
 					</tbody>
 					<tfoot>
 						<tr>
 							<td colspan="2">
 								<button type="button" class="btn btn-dark btn-block btn-sm" (click)="add('sellers')">Add Seller</button>
-								<button type="button" [disabled]="order.sellers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('sellers')">Remove Seller</button>
+								<button type="button" [disabled]="sellers.length === 1" class="btn btn-dark btn-block btn-sm" (click)="delete('sellers')">Remove Seller</button>
 							</td>
 						</tr>
 					</tfoot>
