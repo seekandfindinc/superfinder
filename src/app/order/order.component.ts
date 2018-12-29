@@ -4,7 +4,6 @@ import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
 import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
-import { InvoiceItems } from "../invoice-items";
 import { Document } from "../document";
 import { Forward } from "../forward";
 import { Note } from "../note";
@@ -37,13 +36,6 @@ export class OrderComponent implements OnInit {
 	};
 	public documents: any = [
 	];
-	public invoice_items: InvoiceItems[] = [{
-		item: null,
-		unit: null,
-		cost: null
-	}];
-	public invoice: any = {
-	};
 	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) {}
 	scrollToBottom(): void {
 		try {
@@ -79,7 +71,6 @@ export class OrderComponent implements OnInit {
 		});
 		this.getDocuments();
 		this.getForwards();
-		this.getInvoice();
 	}
 	getForwards(){
 		this.http.get("/api/order/" + this.id + "/forwards").subscribe((val) => {
@@ -94,16 +85,6 @@ export class OrderComponent implements OnInit {
 	getDocuments(){
 		this.http.get("/api/documents/" + this.id).subscribe((val) => {
 			this.documents = val;
-			console.log("GET call successful value returned in body", val);
-		}, response => {
-			console.log("GET call in error", response);
-		}, () => {
-			console.log("The GET observable is now completed.");
-		});
-	}
-	getInvoice(){
-		this.http.get("/api/invoice/" + this.id).subscribe((val) => {
-			this.invoice = val;
 			console.log("GET call successful value returned in body", val);
 		}, response => {
 			console.log("GET call in error", response);
@@ -224,33 +205,6 @@ export class OrderComponent implements OnInit {
 			console.log("The PUT observable is now completed.");
 		});
 	}
-	addItem() {
-		this.invoice_items.push({
-			item: null,
-			unit: null,
-			cost: null
-		});
-	}
-	deleteItem() {
-		this.invoice_items.splice(-1, 1);
-	}
-	invoiceSubmit(id){
-		this.spinner.show();
-		this.http.post("/api/invoice/"+ id, this.invoice_items).subscribe((val) => {
-			console.log("PUT call successful value returned in body", val);
-			$("#generateInvoiceModal").modal("hide");
-			setTimeout(() => {
-				this.spinner.hide();
-				this.getDocuments();
-				this.getInvoice();
-				$("#invoiceGenerated").show();
-			}, 2000);
-		}, response => {
-			console.log("PUT call in error", response)
-		}, () => {
-			console.log("The PUT observable is now completed.");
-		});
-	}
 	newMessage(id){
 		var user = JSON.parse(localStorage.currentUser);
 		this.http.post("/api/order/"+ id + "/note", {
@@ -271,24 +225,5 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The PUT observable is now completed.");
 		});
-	}
-	markPaid(id){
-		if(confirm("Are you sure you want to mark this paid?")){		
-			this.spinner.show();
-			let payed_date = moment().format("YYYY-MM-DD");
-			this.http.put("/api/invoice/"+ id, {
-				payed_date: payed_date
-			}).subscribe((val) => {
-				console.log("PUT call successful value returned in body", val);
-				setTimeout(() => {
-					this.invoice.payed_date = payed_date;
-					this.spinner.hide();
-				}, 2000);			
-			}, response => {
-				console.log("PUT call in error", response)
-			}, () => {
-				console.log("The PUT observable is now completed.");
-			});
-		}
 	}
 }
