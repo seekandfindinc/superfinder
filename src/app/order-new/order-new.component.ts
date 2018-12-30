@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from "@angular/common/http";
+import { Owner } from "../models/owner.model";
 
 @Component({
 	selector: 'app-order-new',
@@ -8,23 +9,18 @@ import { HttpClient } from "@angular/common/http";
 	styleUrls: ['./order-new.component.css']
 })
 export class OrderNewComponent implements OnInit {
-	buyers = [{
-		name: null,
-		address: null
-	}];
-	sellers = [{
-		name: null,
-		address: null
-	}];
+	buyers: Owner[] = [
+		new Owner(null, null)
+	];
+	sellers: Owner[] = [
+		new Owner(null, null)
+	];
 	constructor(private router: Router, private http: HttpClient) {
 	}
 	ngOnInit(){
 	}
 	add(list){
-		this[list].push({
-			name: null,
-			address: null
-		});
+		this[list].push(new Owner(null, null));
 	}
 	delete(list){
 		this[list].splice(-1, 1);
