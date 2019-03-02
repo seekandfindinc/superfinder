@@ -9,20 +9,15 @@ import { CookieService } from 'ngx-cookie-service';
 	styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-	login_email: string;
-	register_email: string;
-	forgot_email: string;
-	password: string;
-	first_name: string;
-	last_name: string;
-	constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) { }
+	constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {
+	}
 	ngOnInit() {
 	}
-	newUserSubmit() {
+	newUserSubmit(form) {
 		this.http.post("/api/register", {
-			email: this.register_email,
-			first_name: this.first_name,
-			last_name: this.last_name,
+			email: form.value.email,
+			first_name: form.value.first_name,
+			last_name: form.value.last_name,
 		}).subscribe((val) => {
 			alert("User Registered. Password will be emailed shortly. Once approved you will be notified.");
 			console.log("POST call successful value returned in body", val);
@@ -32,11 +27,11 @@ export class LoginComponent implements OnInit {
 			console.log("The POST observable is now completed.");
 		});
 	}
-	loginSubmit(){
+	loginSubmit(form){
 		this.http.get("/api/user", {
 			params: {
-				email: this.login_email,
-				password: this.password
+				email: form.value.email,
+				password: form.value.password
 			}
 		}).subscribe((val) => {
 			if(val){
@@ -54,9 +49,9 @@ export class LoginComponent implements OnInit {
 			console.log("The GET observable is now completed.");
 		});
 	}
-	forgotSubmit(){
+	forgotSubmit(form){
 		this.http.post("/api/user/forgot", {
-			email: this.forgot_email
+			email: form.value.email
 		}).subscribe((val) => {
 			console.log("GET call successful value returned in body", val);
 			if(val){

@@ -20,48 +20,48 @@
 				<div class="card-body text-left">
 					<div class="tab-content">
 						<div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-							<form class="was-validated" (ngSubmit)="loginSubmit()" #loginForm="ngForm">
+							<form class="was-validated" (ngSubmit)="loginSubmit(login)" #login="ngForm">
 								<div class="form-group">
 									<label>Seek and Find Email</label>
-									<input type="email" class="form-control form-control-sm" required [(ngModel)]="login_email" name="login_email" email>
+									<input type="email" class="form-control form-control-sm" required [ngModel] name="email" email>
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
 								<div class="form-group">
 									<label>Password</label>
-									<input type="password" class="form-control form-control-sm" required [(ngModel)]="password" name="password">
+									<input type="password" class="form-control form-control-sm" required [ngModel] name="password">
 									<div class="invalid-feedback">Enter password</div>
 								</div>
-								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="loginForm.form.invalid">Sign In</button>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="!login.valid">Sign In</button>
 							</form>
 						</div>
 						<div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-							<form class="was-validated" (ngSubmit)="newUserSubmit()" #newUserForm="ngForm">
+							<form class="was-validated" (ngSubmit)="newUserSubmit(newuser)" #newuser="ngForm">
 								<div class="form-group">
 									<label>Seek and Find Email</label>
-									<input type="email" class="form-control form-control-sm" required [(ngModel)]="register_email" name="register_email" email>
+									<input type="email" class="form-control form-control-sm" required [ngModel] name="email" email>
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
 								<div class="form-group">
 									<label>First Name</label>
-									<input type="text" class="form-control form-control-sm" required [(ngModel)]="first_name" name="first_name">
+									<input type="text" class="form-control form-control-sm" required [ngModel] name="first_name">
 									<div class="invalid-feedback">Enter first name</div>
 								</div>
 								<div class="form-group">
 									<label>Last Name</label>
-									<input type="text" class="form-control form-control-sm" required [(ngModel)]="last_name" name="last_name">
+									<input type="text" class="form-control form-control-sm" required [ngModel] name="last_name">
 									<div class="invalid-feedback">Enter last name</div>
 								</div>
-								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="newUserForm.form.invalid">Register</button>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="!newuser.valid">Register</button>
 							</form>
 						</div>
 						<div class="tab-pane fade" id="forgot" role="tabpanel" aria-labelledby="forgot-tab">
-							<form class="was-validated" (ngSubmit)="forgotSubmit()" #forgotForm="ngForm">
+							<form class="was-validated" (ngSubmit)="forgotSubmit(forgot)" #forgot="ngForm">
 								<div class="form-group">
 									<label>Seek and Find Email</label>
-									<input type="email" class="form-control form-control-sm" required [(ngModel)]="forgot_email" name="forgot_email" email>
+									<input type="email" class="form-control form-control-sm" required [ngModel] name="email" email>
 									<div class="invalid-feedback">Enter valid email</div>
 								</div>
-								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="forgotForm.form.invalid">Reset</button>
+								<button type="submit" class="btn btn-secondary btn-sm btn-block" [disabled]="!forgot.valid">Reset</button>
 							</form>
 						</div>
 					</div>
