@@ -2,7 +2,6 @@
 <div class="container">
 	<app-navbar></app-navbar>
 	<form class="was-validated" (ngSubmit)="orderSubmit(neworder)" #neworder="ngForm">
-		{{neworder.value | json}}
 		<div class="form-row">
 			<div class="col">
 				<label>Property</label>
