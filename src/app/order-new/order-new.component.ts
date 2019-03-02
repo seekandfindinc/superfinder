@@ -25,14 +25,14 @@ export class OrderNewComponent implements OnInit {
 	delete(list){
 		this[list].splice(-1, 1);
 	}
-	orderSubmit(propertyAddress: HTMLInputElement, referenceNumber: HTMLInputElement, lender: HTMLInputElement, corporation: HTMLInputElement, purchasePrice: HTMLInputElement, loanAmount: HTMLInputElement){
+	orderSubmit(form){
 		this.http.post("/api/order", {
-			property_address: propertyAddress.value,
-			reference_number: referenceNumber.value,
-			lender: lender.value,
-			corporation: corporation.value,
-			purchase_price: purchasePrice.value,
-			loan_amount: loanAmount.value,
+			property_address: form.value.property_address,
+			reference_number: form.value.reference_number,
+			lender: form.value.lender,
+			corporation: form.value.corporation,
+			purchase_price: form.value.purchase_price,
+			loan_amount: form.value.loan_amount,
 			buyers: this.buyers,
 			sellers: this.sellers
 		}).subscribe((val) => {
