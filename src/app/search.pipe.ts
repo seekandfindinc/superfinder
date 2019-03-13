@@ -16,7 +16,7 @@ export class SearchPipe implements PipeTransform {
 			return items.filter(item => {
 				return item.property_address.toLowerCase().includes(search.property_address.toLowerCase())
 					&& item.corporation.toLowerCase().includes(search.corporation.toLowerCase())
-					&& item.reference_number.toLowerCase().includes(search.reference_number.toLowerCase())
+					&& (item.reference_number ? item.reference_number.toLowerCase().includes(search.reference_number.toLowerCase()) : false)
 					&& (item.lender ? item.lender.toLowerCase().includes(search.lender.toLowerCase()) : false)
 					&& (search.closed ? search.closed == item.closed : true);
 			});
