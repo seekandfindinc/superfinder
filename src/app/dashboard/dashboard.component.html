@@ -12,63 +12,51 @@
 	<div class="card">
 		<div class="card-header">Filters</div>
 		<div class="card-body">
+			<small>
+				<p class="text-black-50">Start typing to search</p>
+			</small>
 			<div class="row">
-				<div class="col">
+				<div class="col-3">
 					<label>Corporation</label>
-					<input type="text" [(ngModel)]="filters.corporation" class="form-control form-control-sm" placeholder="ABC Corporation">
+					<input type="text" [(ngModel)]="filter.corporation" class="form-control form-control-sm" placeholder="ABC Corporation">
 				</div>
-				<div class="col">
+				<div class="col-3">
 					<label>Property Address</label>
-					<input type="text" [(ngModel)]="filters.property_address" class="form-control form-control-sm" placeholder="1 Apple Street, New York, NY 10001">
+					<input type="text" [(ngModel)]="filter.property_address" class="form-control form-control-sm" placeholder="1 Apple Street, New York, NY 10001">
 				</div>
-				<div class="col">
-					<label>Order Reference</label>
-					<input type="text" [(ngModel)]="filters.reference_number" class="form-control form-control-sm" placeholder="123456">
-				</div>
-				<div class="col">
-					<label>Lender</label>
-					<input type="text" [(ngModel)]="filters.lender" class="form-control form-control-sm" placeholder="Bank of Money">
-				</div>
-			</div>
-			<br>
-			<div class="row">
-				<div class="col">
-					<label>Closing Date</label>
-					<div class="input-group mb-3">
-						<input type="text" [(ngModel)]="filters.closing_date" class="form-control form-control-sm" placeholder="YYYY-MM-DD" ngbDatepicker #d="ngbDatepicker">
-						<div class="input-group-append">
-							<button class="btn btn-outline-dark btn-sm" type="button" (click)="d.toggle()"><i class="far fa-calendar-alt"></i></button>
-						</div>
-					</div>
-				</div>
-				<div class="col">
+				<div class="col-6">
 					<label>Status</label>
-					<select class="form-control form-control-sm" [(ngModel)]="filters.closed">
+					<select class="form-control form-control-sm" [(ngModel)]="filter.closed">
 						<option></option>
 						<option value="0">Open</option>
 						<option value="1">Closed</option>
 					</select>
 				</div>
+				
 			</div>
+			<br>
 			<div class="row">
-				<div class="col text-right">
-					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-info btn-sm" (click)="clear()">Clear</button>
-						<button type="button" class="btn btn-success btn-sm" (click)="search(filters)">Search</button>
-					</div>
+				<div class="col">
+					<label>Order Reference</label>
+					<input type="text" [(ngModel)]="filter.reference_number" class="form-control form-control-sm" placeholder="123456">
 				</div>
-			</div>			
+				<div class="col">
+					<label>Lender</label>
+					<input type="text" [(ngModel)]="filter.lender" class="form-control form-control-sm" placeholder="Bank of Money">
+				</div>
+			</div>
 		</div>
 	</div>
 	<br>
 	<div class="list-group">
-		<a [routerLink]="['/admin/dashboard/order', order.id]" class="list-group-item list-group-item-action flex-column align-items-start {{order.closed ? 'list-group-item-danger' : 'list-group-item-success'}}" *ngFor="let order of orders">
+		<a [routerLink]="['/admin/dashboard/order', order.id]" class="list-group-item list-group-item-action flex-column align-items-start {{order.closed ? 'list-group-item-danger' : 'list-group-item-success'}}" *ngFor="let order of orders | search : filter">
 			<div class="d-flex w-100 justify-content-between">
-				<h5 class="mb-1">{{order.property_address}}</h5>
+				<h5 class="mb-1">Address: {{order.property_address}}</h5>
 				<small>Last Updated {{order.updatedAt | date:'EEEE, MMMM d yyyy hh:mm a'}}</small>
 			</div>
-			<p class="mb-1">{{order.corporation}}</p>
 			<small>
+				<b>Corporation: {{order.corporation}}</b> | <b>Lender: {{order.lender ? order.lender : "N/A"}}</b> | <b>Reference #: {{order.reference_number ? order.reference_number : "N/A"}}</b>
+				<br>
 				<b>Buyers: {{order.buyers.join(", ")}}</b>
 				<br>
 				<b>Sellers: {{order.sellers.join(", ")}} </b>
