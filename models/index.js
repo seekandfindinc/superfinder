@@ -129,6 +129,10 @@ const OrderForward = sequelize.define("OrderForward", {
 	html:{
 		type: Sequelize.TEXT,
 		allowNull: false
+	},
+	coverage:{
+		type: Sequelize.FLOAT,
+		allowNull: false
 	}
 },{
 	paranoid: true

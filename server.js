@@ -531,9 +531,10 @@ app.post("/api/order/:id/forward", authToken, function(req, res){
 						sellersList = sellersList + value.name + "<br>";
 					}
 				});
-				forward_order_email = forward_order_email.replace("[PROPERTY]", order.property_address).replace("[CORP]", order.corporation).replace("[PURCH]", "$" + order.purchase_price).replace("[LENDER]", order.lender ? order.lender : "NONE").replace("[LOAN]", order.loan_amount ? "$" + order.loan_amount : "NONE").replace("[BUYERS]", buyersList).replace("[SELLERS]", sellersList);
+				forward_order_email = forward_order_email.replace("[PROPERTY]", order.property_address).replace("[CORP]", order.corporation).replace("[PURCH]", "$" + order.purchase_price).replace("[LENDER]", order.lender ? order.lender : "NONE").replace("[LOAN]", order.loan_amount ? "$" + order.loan_amount : "NONE").replace("[BUYERS]", buyersList).replace("[SELLERS]", sellersList).replace("[FORWARD]", "$" + req.body.coverage);
 				models.OrderForward.create({
 					email: req.body.email,
+					coverage: req.body.coverage,
 					subject: "New Order",
 					html: forward_order_email,
 					OrderId: req.params.id,
