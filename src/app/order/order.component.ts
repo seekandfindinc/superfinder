@@ -26,7 +26,8 @@ export class OrderComponent implements OnInit {
 		text: null
 	};
 	public forward: Forward = {
-		email: null
+		email: null,
+		coverage: null
 	};
 	public document: Document = {
 		description: null,
