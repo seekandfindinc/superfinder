@@ -51,7 +51,7 @@ const Order = sequelize.define("Order", {
 	},
 	purchase_price:{
 		type: Sequelize.FLOAT,
-		allowNull: false
+		allowNull: true
 	},
 	loan_amount:{
 		type: Sequelize.FLOAT,
