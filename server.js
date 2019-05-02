@@ -33,15 +33,15 @@ const jwt = require("jsonwebtoken");
 http.createServer(function (req, res) {
 	var header = req.headers["host"];
 	res.writeHead(307, {
-		Location: header.search(":") > -1 ? "https://" + header.slice(0, header.search(":")) + ":" + config.ssl_port + req.url : "https://" + header + ":" + config.ssl_port + req.url
+		Location: "https://" + header + req.url
 	});
 	res.end();
-}).listen(config.no_ssl_port, config.web_host);
+}).listen(80);
 
 https.createServer({
 	key: config.key,
 	cert: config.cert
-}, app).listen(config.ssl_port, config.web_host);
+}, app).listen(443);
 
 let authToken = function(req, res, next){
 	if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'){

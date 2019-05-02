@@ -11,4 +11,4 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 ## Build for Production
 
-Run `npm run-script build` to build the project. Configure config files in "config" folder. Run `node server.js` to start it.
+Run `npm run-script build` to build the project. Configure config files in "config" folder. Run `node server.js --dbname dbname --dbuser dbuser --dbpass dbpass --dbhost dbhost` to start it.
