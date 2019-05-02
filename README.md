@@ -1,14 +1,19 @@
 # superfinder
 
+## Build for Development
 
-## Development server
+- Run `npm start` for a dev server to turn on FE
 
-Run `npm start` for a dev server. Configure config files in "config" folder. Run `node server.js`. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Configure config files in "config" folder.
 
-## Code scaffolding
+- Run `node server.js --dbname dbname --dbuser dbuser --dbpass dbpass --dbhost dbhost`  to turn on BE
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Navigate to `http://localhost:4200`. The app will automatically reload if you change any of the source files.
 
 ## Build for Production
 
-Run `npm run-script build` to build the project. Configure config files in "config" folder. Run `node server.js --dbname dbname --dbuser dbuser --dbpass dbpass --dbhost dbhost` to start it.
+- Configure config files in "config" folder.
+
+- Run `npm run-script build` to build the project.
+
+- Run `node server.js --dbname dbname --dbuser dbuser --dbpass dbpass --dbhost dbhost` to start it.
