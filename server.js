@@ -31,10 +31,7 @@ const Sequelize = require("sequelize");
 const jwt = require("jsonwebtoken");
 
 http.createServer(function (req, res) {
-	var header = req.headers["host"];
-	res.writeHead(307, {
-		Location: "https://" + header + req.url
-	});
+	res.writeHead(307, { Location: "https://" + req.headers.host + req.url });
 	res.end();
 }).listen(80);
 
@@ -44,11 +41,8 @@ https.createServer({
 }, app).listen(443);
 
 let authToken = function(req, res, next){
-	if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer'){
-		return next();
-    } else {
-    	return res.send(401);
-    }
+	if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') return next();
+	else return res.send(401);
 };
 
 app.use(cors())
