@@ -33,7 +33,7 @@ const jwt = require("jsonwebtoken");
 http.createServer(function (req, res) {
 	res.writeHead(307, { Location: "https://" + req.headers.host + req.url });
 	res.end();
-}).listen(80);
+}).listen(8080);
 
 https.createServer({
 	key: config.key,
