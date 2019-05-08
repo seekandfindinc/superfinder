@@ -38,7 +38,7 @@ http.createServer(function (req, res) {
 https.createServer({
 	key: config.key,
 	cert: config.cert
-}, app).listen(443);
+}, app).listen(8443);
 
 let authToken = function(req, res, next){
 	if(req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') return next();
