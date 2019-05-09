@@ -1,7 +1,8 @@
+const argv = require('minimist')(process.argv.slice(2));
 const Sequelize = require("sequelize");
 const config = require("../config");
-const sequelize = new Sequelize(config.dbname, config.user, config.password, {
-	host: config.host,
+const sequelize = new Sequelize(argv.dbname, argv.dbuser, argv.dbpass, {
+	host: argv.dbhost,
 	dialect: "mysql",
 	logging: false
 });
