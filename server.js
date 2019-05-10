@@ -15,20 +15,25 @@ const multer  = require("multer");
 const stream = require("stream");
 const mime = require("mime");
 const nodemailer = require("nodemailer");
+const Sequelize = require("sequelize");
+const jwt = require("jsonwebtoken");
 const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const fs = require("fs");
 const config = require("./config");
-const transporter = nodemailer.createTransport({
-	service: "gmail",
+
+// Send e-mail using SMTP
+var smtpTransporter = nodemailer.createTransport({
+	port: 465,
+	host: "email-smtp.us-east-1.amazonaws.com",
+	secure: true,
 	auth: {
-		user: config.email_username,
-		pass: config.email_password
-	}
+		user: config.awsUsername,
+		pass: config.awsPassword
+	},
+	debug: true
 });
-const Sequelize = require("sequelize");
-const jwt = require("jsonwebtoken");
 
 http.createServer(function (req, res) {
 	res.writeHead(307, { Location: "https://" + req.headers.host + req.url });
@@ -156,16 +161,17 @@ app.get("/api/user/forgot/:hash", function(req, res){
 							id: password_reset.id
 						}
 					}).then((password_reset) => {
-						transporter.sendMail({
-							from: "team@seekandfindinc.com",
+						smtpTransporter.sendMail({
+							from: 'stephen@seekandfindinc.com',
 							to: user.email,
-							subject: "Reset Password",
-							html: password_reset_step2_email.replace("[NEW_PASSWORD]", password).replace("[LOGIN_URL]", config.email_domain)
-						}, (error, info) => {
+							html: password_reset_step2_email.replace("[NEW_PASSWORD]", password).replace("[LOGIN_URL]", config.email_domain),
+							subject: "Reset Password"
+						}, function(error, info){
 							if (error) {
 								return console.log(error);
+							} else {
+								console.log('Message sent: ' + info.response);
 							}
-							console.log("Message sent: %s", info.messageId);
 							return res.redirect(config.email_domain + "/admin/user/forgot?status=s")
 						});
 					}).catch((err) => {
@@ -206,16 +212,17 @@ app.post("/api/user/forgot", function(req, res){
 				hash: hash,
 				UserId: user.id
 			}).then((password_reset) => {
-				transporter.sendMail({
-					from: "team@seekandfindinc.com",
+				smtpTransporter.sendMail({
+					from: 'stephen@seekandfindinc.com',
 					to: user.email,
-					subject: "Reset Password",
-					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash)
-				}, (error, info) => {
+					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash),
+					subject: "Reset Password"
+				}, function(error, info){
 					if (error) {
 						return console.log(error);
+					} else {
+						console.log('Message sent: ' + info.response);
 					}
-					console.log("Message sent: %s", info.messageId);
 					return res.send(true);
 				});
 			}).catch((err) => {
@@ -245,16 +252,17 @@ app.post("/api/register", [
 		first_name: req.body.first_name,
 		last_name: req.body.last_name
 	}).then((user) => {
-		transporter.sendMail({
-			from: "team@seekandfindinc.com",
+		smtpTransporter.sendMail({
+			from: 'stephen@seekandfindinc.com',
 			to: req.body.email,
-			subject: "New User",
-			html: new_account_email.replace("[EMAIL]", req.body.email).replace("[PASSWORD]", password)
-		}, (error, info) => {
+			html: new_account_email.replace("[EMAIL]", req.body.email).replace("[PASSWORD]", password),
+			subject: "New User"
+		}, function(error, info){
 			if (error) {
 				return console.log(error);
+			} else {
+				console.log('Message sent: ' + info.response);
 			}
-			console.log("Message sent: %s", info.messageId);
 			return res.send(true);
 		});
 	}).catch((err) => {
@@ -533,16 +541,18 @@ app.post("/api/order/:id/forward", authToken, function(req, res){
 					html: forward_order_email,
 					OrderId: req.params.id,
 				}).then((orderforward) => {
-					transporter.sendMail({
-						from: "team@seekandfindinc.com",
+
+					smtpTransporter.sendMail({
+						from: 'stephen@seekandfindinc.com',
 						to: req.body.email,
-						subject: "New Order",
-						html: forward_order_email
-					}, (error, info) => {
+						html: forward_order_email,
+						subject: "New Order"
+					}, function(error, info){
 						if (error) {
 							return console.log(error);
+						} else {
+							console.log('Message sent: ' + info.response);
 						}
-						console.log("Message sent: %s", info.messageId);
 						return res.send(true);
 					});
 				}).catch((err) => {

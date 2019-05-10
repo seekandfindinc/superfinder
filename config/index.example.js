@@ -1,10 +1,10 @@
 const fs = require("fs");
-var config = {
-	email_username: "email_username",
-	email_password: "email_password",
+const config = {
+	awsUsername: "awsUsername",
+	awsPassword: "awsPassword",
 	cert: fs.readFileSync("cert.pem"),
 	key: fs.readFileSync("key.pem"),
-	email_domain: "http://localhost:4200/"
+	email_domain: "http://localhost"
 };
 
 module.exports = config;
