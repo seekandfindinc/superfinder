@@ -35,6 +35,12 @@ var smtpTransporter = nodemailer.createTransport({
 	debug: true
 });
 
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+	accessKeyId: config.awsS3Username,
+	secretAccessKey: config.awsS3Password
+});
+
 http.createServer(function (req, res) {
 	res.writeHead(307, { Location: "https://" + req.headers.host + req.url });
 	res.end();
@@ -569,51 +575,33 @@ app.post("/api/order/:id/forward", authToken, function(req, res){
 	});
 });
 
-app.get("/api/document/:id", function(req, res){
-	models.Document.find({
-		where:{
-			id: req.params.id
-		},
-		raw: true,
-		attributes: ["filename", "file", "createdAt"]
-	}).then((document) => {
-		var fileContents = Buffer.from(document.file, "base64");
-		var mimetype = mime.getType(document.filename);
-		res.setHeader("Content-disposition", "attachment; filename=" + document.filename);
-		res.setHeader("Content-type", mimetype);
-		var readStream = new stream.PassThrough();
-		readStream.end(fileContents);
-		readStream.pipe(res);
-	}).catch((err) => {
-		res.status(500).send(err.stack);
-	});
+app.get("/api/document", function(req, res){
+	res.attachment(req.query.key);
+	var fileStream = s3.getObject({
+		Bucket: config.awsS3Bucket,
+		Key: req.query.key
+	}).createReadStream();
+	fileStream.pipe(res);	
 });
 
 app.get("/api/documents/:id", authToken, function(req, res){
-	models.Document.findAll({
-		where:{
-			OrderId: req.params.id
-		},
-		raw: true,
-		order:[["createdAt", "DESC"]],
-		attributes: ["description", "id", "createdAt"]
-	}).then((documents) => {
-		res.send(documents);
-	}).catch((err) => {
-		res.status(500).send(err.stack);
+	s3.listObjectsV2({
+		Bucket: config.awsS3Bucket,
+		Prefix: req.params.id + "/"
+	}, function(err, data) {
+		if (err) res.status(500).send(err.stack);
+		else res.send(data.Contents);
 	});
 });
 
 app.post("/api/document", [authToken, upload.single("file")], function(req, res){
-	models.Document.create({
-		filename: req.file.originalname,
-		description: req.body.description,
-		file: req.file.buffer,
-		OrderId: req.body.OrderId
-	}).then((document) => {
-		return res.send(document);
-	}).catch((err) => {
-		return res.status(500).send(err.stack);
+	s3.upload({
+		Bucket: config.awsS3Bucket,
+		Key: req.body.OrderId + "/" + req.file.originalname,
+		Body: req.file.buffer
+	}, function(err, data) {
+		if(err) return res.status(500).send(err.stack);
+		else return res.send(true);
 	});
 });
 

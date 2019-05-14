@@ -21,6 +21,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
 import { MarketingComponent } from './marketing/marketing.component';
 import { AppRoutingModule } from './app-routing.module';
+import { FileDropModule } from 'ngx-file-drop';
 
 @NgModule({
 	declarations: [
@@ -41,7 +42,8 @@ import { AppRoutingModule } from './app-routing.module';
 		FormsModule,
 		NgbModule,
 		NgxSpinnerModule,
-		AppRoutingModule
+		AppRoutingModule,
+		FileDropModule
 	],
 	providers: [CookieService, {
 		provide: HTTP_INTERCEPTORS,
