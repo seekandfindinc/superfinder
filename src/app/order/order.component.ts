@@ -6,7 +6,7 @@ import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Forward } from "../forward";
 import { Note } from "../note";
-import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
 
 @Component({
 	selector: 'app-order',
