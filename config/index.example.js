@@ -6,7 +6,8 @@ var config = {
 	key: fs.readFileSync("key.pem"),
 	email_domain: "http://localhost:4200/",
 	awsS3Username: "awsS3Username",
-	awsS3Password: "awsS3Password"
+	awsS3Password: "awsS3Password",
+	awsS3Bucket: "awsS3Bucket"
 };
 
 module.exports = config;

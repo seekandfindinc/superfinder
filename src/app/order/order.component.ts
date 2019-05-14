@@ -4,10 +4,9 @@ import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from '@angular/router';
 import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Document } from "../document";
 import { Forward } from "../forward";
 import { Note } from "../note";
-
+import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 
 @Component({
 	selector: 'app-order',
@@ -28,10 +27,6 @@ export class OrderComponent implements OnInit {
 	public forward: Forward = {
 		email: null,
 		coverage: null
-	};
-	public document: Document = {
-		description: null,
-		file: null
 	};
 	public closing_date: any = {
 	};
@@ -162,33 +157,8 @@ export class OrderComponent implements OnInit {
 	delete(list) {
 		this.order[list].splice(-1, 1);
 	}
-	onFileChange(event) {
-		if(event.target.files.length > 0) {
-			let file = event.target.files[0];
-			this.document.file = file;
-		}
-	}
-	docSubmit(id){
-		this.spinner.show();
-		let formData = new FormData();
-		formData.append("description", this.document.description);
-		formData.append("file", this.document.file);
-		formData.append("OrderId", id);
-		this.http.post("/api/document/", formData).subscribe((val) => {
-			console.log("POST call successful value returned in body", val);
-			$("#newDocumentModal").modal("hide");
-			setTimeout(() => {
-				this.getDocuments();
-				this.spinner.hide();
-			}, 2000);			
-		}, response => {
-			console.log("POST call in error", response)
-		}, () => {
-			console.log("The POST observable is now completed.");
-		});
-	}
 	download(id){
-		window.open("/api/document/" + id, '_self');
+		window.open("/api/document/?key=" + id, '_self');
 	}
 	forwardSubmit(id){
 		this.spinner.show();
@@ -226,5 +196,29 @@ export class OrderComponent implements OnInit {
 		}, () => {
 			console.log("The PUT observable is now completed.");
 		});
+	}
+
+	public files: UploadFile[] = [];
+
+	public dropped(event: UploadEvent, orderID: string) {
+		this.files = event.files;
+		for (const droppedFile of event.files) {
+			if (droppedFile.fileEntry.isFile) {
+				const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+				fileEntry.file((file: File) => {
+					let formData = new FormData();
+					formData.append("file", file);
+					formData.append("OrderId", orderID);
+					this.http.post("/api/document/", formData).subscribe((val) => {
+						console.log("File Uploaded", val);
+						this.getDocuments();
+					}, response => {
+						console.log("POST call in error", response)
+					}, () => {
+						console.log("The POST observable is now completed.");
+					});
+				});
+			}
+		}
 	}
 }
