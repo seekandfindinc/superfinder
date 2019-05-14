@@ -8,7 +8,9 @@ const s3 = new AWS.S3({
 const models = require("./models");
 const Sequelize = require("sequelize");
 
-models.finder.query("SELECT * FROM documents").then(documents => {
+models.finder.query("SELECT * FROM Documents", {
+	type: Sequelize.QueryTypes.SELECT
+}).then(documents => {
 	documents.forEach(function(doc){
 		s3.upload({
 			Bucket: config.awsS3Bucket,
