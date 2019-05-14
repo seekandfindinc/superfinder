@@ -29,8 +29,8 @@ var smtpTransporter = nodemailer.createTransport({
 	host: "email-smtp.us-east-1.amazonaws.com",
 	secure: true,
 	auth: {
-		user: config.awsUsername,
-		pass: config.awsPassword
+		user: config.awsSESUsername,
+		pass: config.awsSESPassword
 	},
 	debug: true
 });
