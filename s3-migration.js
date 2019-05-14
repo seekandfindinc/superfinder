@@ -6,12 +6,12 @@ const s3 = new AWS.S3({
 	secretAccessKey: config.awsS3Password
 });
 const models = require("./models");
-models.Document.findAll({
-	raw: true
-}).then(function(documents){
+const Sequelize = require("sequelize");
+
+models.finder.query("SELECT * FROM documents").then(documents => {
 	documents.forEach(function(doc){
 		s3.upload({
-			Bucket: "seekandfind-testing",
+			Bucket: config.awsS3Bucket,
 			Key: doc.OrderId + "/" + doc.filename,
 			Body: doc.file
 		}, function(err, data) {
