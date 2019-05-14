@@ -101,23 +101,6 @@ const Seller = sequelize.define("Seller", {
 	paranoid: true
 });
 
-const Document = sequelize.define("Document", {
-	filename:{
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	description:{
-		type: Sequelize.STRING,
-		allowNull: false
-	},
-	file: {
-		type: Sequelize.BLOB("long"),
-		allowNull: false
-	}
-},{
-	paranoid: true
-});
-
 const OrderForward = sequelize.define("OrderForward", {
 	email:{
 		type: Sequelize.STRING,
@@ -168,7 +151,6 @@ const Note = sequelize.define("Note", {
 
 Order.hasMany(Buyer);
 Order.hasMany(Seller);
-Order.hasMany(Document);
 Order.hasMany(OrderForward);
 User.hasMany(UserPasswordReset);
 User.hasMany(Note);
@@ -181,6 +163,6 @@ module.exports["UserPasswordReset"] = UserPasswordReset;
 module.exports["Order"] = Order;
 module.exports["Buyer"] = Buyer;
 module.exports["Seller"] = Seller;
-module.exports["Document"] = Document;
 module.exports["OrderForward"] = OrderForward;
 module.exports["Note"] = Note;
+module.exports["finder"] = sequelize;
