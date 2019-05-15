@@ -23,8 +23,7 @@ const upload = multer({ storage: storage });
 const fs = require("fs");
 const config = require("./config");
 
-// Send e-mail using SMTP
-var smtpTransporter = nodemailer.createTransport({
+const smtpTransporter = nodemailer.createTransport({
 	port: 465,
 	host: "email-smtp.us-east-1.amazonaws.com",
 	secure: true,
@@ -168,7 +167,7 @@ app.get("/api/user/forgot/:hash", function(req, res){
 						}
 					}).then((password_reset) => {
 						smtpTransporter.sendMail({
-							from: 'stephen@seekandfindinc.com',
+							from: 'team@seekandfindinc.com',
 							to: user.email,
 							html: password_reset_step2_email.replace("[NEW_PASSWORD]", password).replace("[LOGIN_URL]", config.email_domain),
 							subject: "Reset Password"
@@ -219,7 +218,7 @@ app.post("/api/user/forgot", function(req, res){
 				UserId: user.id
 			}).then((password_reset) => {
 				smtpTransporter.sendMail({
-					from: 'stephen@seekandfindinc.com',
+					from: 'team@seekandfindinc.com',
 					to: user.email,
 					html: password_reset_step1_email.replace("[PASSWORD_RESET_URL]", config.email_domain + "/api/user/forgot/" + hash),
 					subject: "Reset Password"
@@ -259,7 +258,7 @@ app.post("/api/register", [
 		last_name: req.body.last_name
 	}).then((user) => {
 		smtpTransporter.sendMail({
-			from: 'stephen@seekandfindinc.com',
+			from: 'team@seekandfindinc.com',
 			to: req.body.email,
 			html: new_account_email.replace("[EMAIL]", req.body.email).replace("[PASSWORD]", password),
 			subject: "New User"
@@ -547,9 +546,8 @@ app.post("/api/order/:id/forward", authToken, function(req, res){
 					html: forward_order_email,
 					OrderId: req.params.id,
 				}).then((orderforward) => {
-
 					smtpTransporter.sendMail({
-						from: 'stephen@seekandfindinc.com',
+						from: 'processing@seekandfindinc.com',
 						to: req.body.email,
 						html: forward_order_email,
 						subject: "New Order"
