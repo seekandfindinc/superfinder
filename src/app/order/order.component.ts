@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { HttpClient } from "@angular/common/http";
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from "moment";
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Forward } from "../forward";
@@ -32,7 +32,7 @@ export class OrderComponent implements OnInit {
 	};
 	public documents: any = [
 	];
-	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService) {}
+	constructor(private http: HttpClient, private route: ActivatedRoute, private spinner: NgxSpinnerService, private router: Router) {}
 	scrollToBottom(): void {
 		try {
 			setTimeout(() => {
@@ -50,23 +50,27 @@ export class OrderComponent implements OnInit {
 			this.id = +params.orderid;
 		});
 		this.http.get("/api/order/" + this.id).subscribe((val) => {
-			this.order = val;
-			console.log("GET call successful value returned in body", val);
+			if(val){
+				this.order = val;
+				console.log("GET call successful value returned in body", val);
+				this.http.get("/api/order/" + this.id + "/notes").subscribe((val) => {
+					this.notes = val;
+					console.log("GET call successful value returned in body", val);
+				}, response => {
+					console.log("GET call in error", response);
+				}, () => {
+					console.log("The GET observable is now completed.");
+				});
+				this.getDocuments();
+				this.getForwards();
+			} else {
+				this.router.navigate(['/', 'admin', 'dashboard']);
+			}
 		}, response => {
 			console.log("GET call in error", response);
 		}, () => {
 			console.log("The GET observable is now completed.");
 		});
-		this.http.get("/api/order/" + this.id + "/notes").subscribe((val) => {
-			this.notes = val;
-			console.log("GET call successful value returned in body", val);
-		}, response => {
-			console.log("GET call in error", response);
-		}, () => {
-			console.log("The GET observable is now completed.");
-		});
-		this.getDocuments();
-		this.getForwards();
 	}
 	getForwards(){
 		this.http.get("/api/order/" + this.id + "/forwards").subscribe((val) => {

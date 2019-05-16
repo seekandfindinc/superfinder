@@ -340,29 +340,33 @@ app.get("/api/order/:id", authToken, function(req, res){
 		},
 		raw: true
 	}).then((order) => {
-		models.Buyer.findAll({
-			where:{
-				OrderId: order.id
-			},
-			raw: true,
-			attributes: ["name", "address"]
-		}).then((buyers) => {
-			models.Seller.findAll({
+		if(order){
+			models.Buyer.findAll({
 				where:{
 					OrderId: order.id
 				},
-				attributes: ["name", "address"],
-				raw: true
-			}).then((sellers) => {
-				order.buyers = buyers;
-				order.sellers = sellers;
-				res.send(order);
+				raw: true,
+				attributes: ["name", "address"]
+			}).then((buyers) => {
+				models.Seller.findAll({
+					where:{
+						OrderId: order.id
+					},
+					attributes: ["name", "address"],
+					raw: true
+				}).then((sellers) => {
+					order.buyers = buyers;
+					order.sellers = sellers;
+					res.send(order);
+				}).catch((err) => {
+					res.status(500).send(err.stack);
+				});
 			}).catch((err) => {
 				res.status(500).send(err.stack);
 			});
-		}).catch((err) => {
-			res.status(500).send(err.stack);
-		});
+		} else {
+			res.send(false);
+		}
 	}).catch((err) => {
 		res.status(500).send(err.stack);
 	});
