@@ -1,13 +1,13 @@
 const fs = require('fs')
 const config = {
-	awsSESUsername: 'awsUsername',
-	awsSESPassword: 'awsPassword',
+	// This section is only needed locally
+	awsUsername: 'awsUsername',
+	awsPassword: 'awsPassword',
+	// This section is only needed locally
+	awsS3Bucket: 'awsS3Bucket',
 	cert: fs.readFileSync('cert.pem'),
 	key: fs.readFileSync('key.pem'),
-	email_domain: 'http://localhost',
-	awsS3Username: 'awsS3Username',
-	awsS3Password: 'awsS3Password',
-	awsS3Bucket: 'awsS3Bucket'
+	email_domain: 'http://localhost'
 }
 
 module.exports = config

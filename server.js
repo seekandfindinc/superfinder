@@ -1,3 +1,4 @@
+const AWS = require('aws-sdk')
 const express = require('express')
 const http = require('http')
 const https = require('https')
@@ -23,20 +24,16 @@ const fs = require('fs')
 const config = require('./config')
 
 const smtpTransporter = nodemailer.createTransport({
-	port: 465,
-	host: 'email-smtp.us-east-1.amazonaws.com',
-	secure: true,
-	auth: {
-		user: config.awsSESUsername,
-		pass: config.awsSESPassword
-	},
-	debug: true
+	SES: new AWS.SES({
+		region: 'us-east-1',
+		accessKeyId: config.awsUsername,
+		secretAccessKey: config.awsPassword
+	})
 })
 
-const AWS = require('aws-sdk')
 const s3 = new AWS.S3({
-	accessKeyId: config.awsS3Username,
-	secretAccessKey: config.awsS3Password
+	accessKeyId: config.awsUsername,
+	secretAccessKey: config.awsPassword
 })
 
 const models = require('./models')
