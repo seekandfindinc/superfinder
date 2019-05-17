@@ -1,14 +1,13 @@
-const argv = require('minimist')(process.argv.slice(2));
-const Sequelize = require("sequelize");
-const config = require("../config");
+const argv = require('minimist')(process.argv.slice(2))
+const Sequelize = require('sequelize')
 const sequelize = new Sequelize(argv.dbname, argv.dbuser, argv.dbpass, {
 	host: argv.dbhost,
-	dialect: "mysql",
+	dialect: 'mysql',
 	logging: false
-});
+})
 
-const User = sequelize.define("User", {
-	email:{
+const User = sequelize.define('User', {
+	email: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
@@ -21,109 +20,109 @@ const User = sequelize.define("User", {
 		allowNull: false,
 		defaultValue: false
 	},
-	first_name:{
+	first_name: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	last_name:{
+	last_name: {
 		type: Sequelize.STRING,
 		allowNull: false
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const Order = sequelize.define("Order", {
-	property_address:{
+const Order = sequelize.define('Order', {
+	property_address: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	reference_number:{
+	reference_number: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	lender:{
+	lender: {
 		type: Sequelize.STRING,
 		allowNull: true
 	},
-	corporation:{
+	corporation: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	purchase_price:{
+	purchase_price: {
 		type: Sequelize.FLOAT,
 		allowNull: true
 	},
-	loan_amount:{
+	loan_amount: {
 		type: Sequelize.FLOAT,
 		allowNull: true
 	},
-	closing_date:{
+	closing_date: {
 		type: Sequelize.DATE,
 		allowNull: true
 	},
-	closed:{
+	closed: {
 		type: Sequelize.BOOLEAN,
 		allowNull: false,
 		defaultValue: false
 	},
-	closed_date:{
+	closed_date: {
 		type: Sequelize.DATE,
 		allowNull: true
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const Buyer = sequelize.define("Buyer", {
-	name:{
+const Buyer = sequelize.define('Buyer', {
+	name: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	address:{
+	address: {
 		type: Sequelize.STRING,
 		allowNull: false
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const Seller = sequelize.define("Seller", {
-	name:{
+const Seller = sequelize.define('Seller', {
+	name: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	address:{
+	address: {
 		type: Sequelize.STRING,
 		allowNull: false
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const OrderForward = sequelize.define("OrderForward", {
-	email:{
+const OrderForward = sequelize.define('OrderForward', {
+	email: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	subject:{
+	subject: {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	html:{
+	html: {
 		type: Sequelize.TEXT,
 		allowNull: false
 	},
-	coverage:{
+	coverage: {
 		type: Sequelize.FLOAT,
 		allowNull: false
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const UserPasswordReset = sequelize.define("UserPasswordReset", {
-	expire_date:{
+const UserPasswordReset = sequelize.define('UserPasswordReset', {
+	expire_date: {
 		type: Sequelize.DATE,
 		allowNull: true
 	},
@@ -131,38 +130,38 @@ const UserPasswordReset = sequelize.define("UserPasswordReset", {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
-	used:{
+	used: {
 		type: Sequelize.BOOLEAN,
 		allowNull: false,
 		defaultValue: false
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-const Note = sequelize.define("Note", {
-	text:{
+const Note = sequelize.define('Note', {
+	text: {
 		type: Sequelize.TEXT,
 		allowNull: true
 	}
-},{
+}, {
 	paranoid: true
-});
+})
 
-Order.hasMany(Buyer);
-Order.hasMany(Seller);
-Order.hasMany(OrderForward);
-User.hasMany(UserPasswordReset);
-User.hasMany(Note);
-Order.hasMany(Note);
+Order.hasMany(Buyer)
+Order.hasMany(Seller)
+Order.hasMany(OrderForward)
+User.hasMany(UserPasswordReset)
+User.hasMany(Note)
+Order.hasMany(Note)
 
 sequelize.sync()
 
-module.exports["User"] = User;
-module.exports["UserPasswordReset"] = UserPasswordReset;
-module.exports["Order"] = Order;
-module.exports["Buyer"] = Buyer;
-module.exports["Seller"] = Seller;
-module.exports["OrderForward"] = OrderForward;
-module.exports["Note"] = Note;
-module.exports["finder"] = sequelize;
+module.exports['User'] = User
+module.exports['UserPasswordReset'] = UserPasswordReset
+module.exports['Order'] = Order
+module.exports['Buyer'] = Buyer
+module.exports['Seller'] = Seller
+module.exports['OrderForward'] = OrderForward
+module.exports['Note'] = Note
+module.exports['finder'] = sequelize

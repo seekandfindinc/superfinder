@@ -1,5 +1,7 @@
 # superfinder
 
+[![Build Status](https://travis-ci.com/seekandfindinc/superfinder.svg?branch=master)](https://travis-ci.com/seekandfindinc/superfinder)
+
 ## Build for Development
 
 - Run `npm start` for a dev server to turn on FE
