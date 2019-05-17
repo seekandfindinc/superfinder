@@ -10,4 +10,4 @@ const config = {
 	awsS3Bucket: 'awsS3Bucket'
 }
 
-module.exports = config
+module.exports = config;
