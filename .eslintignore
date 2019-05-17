@@ -1,0 +1,5 @@
+node_modules
+dist
+src
+e2e
+config/index.js
