@@ -12,4 +12,4 @@ phases:
      - npm run-script build
  post_build:
    commands:
-     - aws s3 sync --delete . "s3://seekandfind-hosting"
+     - aws s3 sync --delete ./dist "s3://seekandfind-hosting"
