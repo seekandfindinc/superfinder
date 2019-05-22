@@ -5,9 +5,10 @@ phases:
       nodejs: 10
    commands:
      - echo "install step"
+     - npm install
+     - npm install -g @angular/cli
  build:
    commands:
-     - npm install
      - npm run-script build
  post_build:
    commands:
