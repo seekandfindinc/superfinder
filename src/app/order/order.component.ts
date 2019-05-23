@@ -14,9 +14,10 @@ import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
     styleUrls: ['./order.component.css']
 })
 export class OrderComponent implements OnInit {
+    public files: UploadFile[] = [];
     @ViewChild('noteList') private myScrollContainer: ElementRef;
     id: number;
-    inEditMode: boolean = false;
+    inEditMode = false;
     public forwards: any = [];
     public notes: any = [];
     public order: any = {
@@ -48,13 +49,11 @@ export class OrderComponent implements OnInit {
         this.route.params.subscribe(params => {
             this.id = +params.orderid;
         });
-        this.http.get('/api/order/' + this.id).subscribe((val) => {
-            if (val) {
-                this.order = val;
-                console.log('GET call successful value returned in body', val);
-                this.http.get('/api/order/' + this.id + '/notes').subscribe((val) => {
-                    this.notes = val;
-                    console.log('GET call successful value returned in body', val);
+        this.http.get('/api/order/' + this.id).subscribe((orderData) => {
+            if (orderData) {
+                this.order = orderData;
+                this.http.get('/api/order/' + this.id + '/notes').subscribe((noteData) => {
+                    this.notes = noteData;
                 }, response => {
                     console.log('GET call in error', response);
                 }, () => {
@@ -179,14 +178,14 @@ export class OrderComponent implements OnInit {
         });
     }
     newMessage(id) {
-        var user = JSON.parse(localStorage.currentUser);
-        this.http.post('/api/order/'+ id + '/note', {
+        const user = JSON.parse(localStorage.currentUser);
+        this.http.post('/api/order/' + id + '/note', {
             text: this.note.text,
             UserId: user.id
         }).subscribe((val) => {
             console.log('PUT call successful value returned in body', val);
             this.notes.push({
-                User:{
+                User: {
                     initials: user.initials
                 },
                 text: this.note.text
@@ -194,13 +193,11 @@ export class OrderComponent implements OnInit {
             this.note.text = null;
             this.scrollToBottom();
         }, response => {
-            console.log('PUT call in error', response)
+            console.log('PUT call in error', response);
         }, () => {
             console.log('The PUT observable is now completed.');
         });
     }
-
-    public files: UploadFile[] = [];
 
     public dropped(event: UploadEvent, orderID: string) {
         this.files = event.files;
@@ -208,14 +205,14 @@ export class OrderComponent implements OnInit {
             if (droppedFile.fileEntry.isFile) {
                 const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
                 fileEntry.file((file: File) => {
-                    let formData = new FormData();
+                    const formData = new FormData();
                     formData.append('file', file);
                     formData.append('OrderId', orderID);
                     this.http.post('/api/document/', formData).subscribe((val) => {
                         console.log('File Uploaded', val);
                         this.getDocuments();
                     }, response => {
-                        console.log('POST call in error', response)
+                        console.log('POST call in error', response);
                     }, () => {
                         console.log('The POST observable is now completed.');
                     });
