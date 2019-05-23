@@ -1,3 +1,3 @@
 export interface Note {
-	text: string;
+    text: string;
 }

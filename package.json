@@ -6,9 +6,8 @@
     "start": "ng serve --aot --proxy-config proxy.config.json",
     "build": "ng build --aot --prod --build-optimizer",
     "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
-    "jslint": "./node_modules/.bin/eslint '**/*.js'"
+    "lint": "ng lint && ./node_modules/.bin/eslint '**/*.js'",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
