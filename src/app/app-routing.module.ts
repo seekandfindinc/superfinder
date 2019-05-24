@@ -3,17 +3,21 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth.guard';
 import { AboutComponent } from './about/about.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { OrderComponent } from './order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ForgotComponent } from './forgot/forgot.component';
-import { UserComponent } from './user/user.component';
+import { UserComponent } from './admin/dashboard/user/user.component';
 import { OrderNewComponent } from './order-new/order-new.component';
 
 const routes: Routes = [{
     path: '',
     component: AboutComponent
+}, {
+    path: 'admin/dashboard/users',
+    component: UserComponent,
+    canActivate: [AuthGuard]
 }, {
     path: 'admin',
     component: LoginComponent
@@ -28,10 +32,6 @@ const routes: Routes = [{
 }, {
     path: 'admin/dashboard/create/order',
     component: OrderNewComponent,
-    canActivate: [AuthGuard]
-}, {
-    path: 'admin/users',
-    component: UserComponent,
     canActivate: [AuthGuard]
 }, {
     path: 'admin/user/forgot',
