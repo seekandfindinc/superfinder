@@ -5,11 +5,11 @@ import { AuthGuard } from './auth.guard';
 import { AboutComponent } from './about/about.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { AdminComponent } from './admin/admin.component';
-import { OrderComponent } from './order/order.component';
+import { OrderComponent } from './admin/dashboard/order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ForgotComponent } from './admin/forgot/forgot.component';
 import { UserComponent } from './admin/dashboard/user/user.component';
-import { OrderNewComponent } from './order-new/order-new.component';
+import { OrderNewComponent } from './admin/dashboard/order/create/order-new.component';
 
 const routes: Routes = [{
     path: '',
