@@ -19,7 +19,7 @@ import { OrderNewComponent } from './order-new/order-new.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
-import { MarketingComponent } from './marketing/marketing.component';
+import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
 import { FileDropModule } from 'ngx-file-drop';
 
@@ -34,7 +34,7 @@ import { FileDropModule } from 'ngx-file-drop';
         ForgotComponent,
         UserComponent,
         OrderNewComponent,
-        MarketingComponent
+        AboutComponent
     ],
     imports: [
         BrowserModule,

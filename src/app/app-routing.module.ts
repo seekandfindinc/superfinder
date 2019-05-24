@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth.guard';
+import { AboutComponent } from './about/about.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { OrderComponent } from './order/order.component';
@@ -9,9 +10,11 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { UserComponent } from './user/user.component';
 import { OrderNewComponent } from './order-new/order-new.component';
-import { MarketingComponent } from './marketing/marketing.component';
 
 const routes: Routes = [{
+    path: '',
+    component: AboutComponent
+}, {
     path: 'admin',
     component: LoginComponent
 }, {
@@ -33,9 +36,6 @@ const routes: Routes = [{
 }, {
     path: 'admin/user/forgot',
     component: ForgotComponent
-}, {
-    path: '',
-    component: MarketingComponent
 }];
 
 @NgModule({
