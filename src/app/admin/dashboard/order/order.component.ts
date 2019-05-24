@@ -1,11 +1,11 @@
 import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarComponent } from '../../../navbar/navbar.component';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Forward } from '../forward';
-import { Note } from '../note';
+import { Forward } from '../../../forward';
+import { Note } from '../../../note';
 import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
 
 @Component({

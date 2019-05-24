@@ -5,14 +5,14 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './auth.guard';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
+import { AdminComponent } from './admin/admin.component';
 import { OrderComponent } from './order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SearchPipe } from './search.pipe';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 import * as bootstrap from 'bootstrap';
-import { ForgotComponent } from './forgot/forgot.component';
+import { ForgotComponent } from './admin/forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './admin/dashboard/user/user.component';
 import { OrderNewComponent } from './order-new/order-new.component';
@@ -27,7 +27,7 @@ import { FileDropModule } from 'ngx-file-drop';
     declarations: [
         AppComponent,
         DashboardComponent,
-        LoginComponent,
+        AdminComponent,
         OrderComponent,
         NavbarComponent,
         SearchPipe,

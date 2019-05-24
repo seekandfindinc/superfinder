@@ -4,10 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth.guard';
 import { AboutComponent } from './about/about.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
+import { AdminComponent } from './admin/admin.component';
 import { OrderComponent } from './order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { ForgotComponent } from './forgot/forgot.component';
+import { ForgotComponent } from './admin/forgot/forgot.component';
 import { UserComponent } from './admin/dashboard/user/user.component';
 import { OrderNewComponent } from './order-new/order-new.component';
 
@@ -15,15 +15,18 @@ const routes: Routes = [{
     path: '',
     component: AboutComponent
 }, {
-    path: 'admin/dashboard/users',
-    component: UserComponent,
-    canActivate: [AuthGuard]
-}, {
     path: 'admin',
-    component: LoginComponent
+    component: AdminComponent
+}, {
+    path: 'admin/forgot',
+    component: ForgotComponent
 }, {
     path: 'admin/dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+}, {
+    path: 'admin/dashboard/users',
+    component: UserComponent,
     canActivate: [AuthGuard]
 }, {
     path: 'admin/dashboard/order/:orderid',
@@ -33,9 +36,6 @@ const routes: Routes = [{
     path: 'admin/dashboard/create/order',
     component: OrderNewComponent,
     canActivate: [AuthGuard]
-}, {
-    path: 'admin/user/forgot',
-    component: ForgotComponent
 }];
 
 @NgModule({

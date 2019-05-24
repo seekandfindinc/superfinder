@@ -4,11 +4,10 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.css']
+    selector: 'app-admin',
+    templateUrl: './admin.component.html'
 })
-export class LoginComponent implements OnInit {
+export class AdminComponent implements OnInit {
     constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {
     }
     ngOnInit() {

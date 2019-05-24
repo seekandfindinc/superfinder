@@ -3,8 +3,7 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 
 @Component({
     selector: 'app-forgot',
-    templateUrl: './forgot.component.html',
-    styleUrls: ['./forgot.component.css']
+    templateUrl: './forgot.component.html'
 })
 
 export class ForgotComponent implements OnInit {
