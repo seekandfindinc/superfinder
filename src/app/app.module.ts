@@ -15,7 +15,7 @@ import * as bootstrap from 'bootstrap';
 import { ForgotComponent } from './admin/forgot/forgot.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UserComponent } from './admin/dashboard/user/user.component';
-import { OrderNewComponent } from './admin/dashboard/order/create/order-new.component';
+import { OrderNewComponent } from './admin/dashboard/order/add/order-add.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';

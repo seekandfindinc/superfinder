@@ -9,20 +9,19 @@
 	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="orderDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Orders</a>
-				<div class="dropdown-menu" aria-labelledby="orderDropdownMenuLink">
-					<a class="dropdown-item" routerLink="/admin/dashboard">Search</a>
-					<a class="dropdown-item" routerLink="/admin/dashboard/create/order">Add</a>
-				</div>
+            <li class="nav-item">
+				<a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/admin/dashboard/">Search Orders</a>
+            </li>
+            <li class="nav-item">
+				<a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/admin/dashboard/order/add">Add Order</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" routerLink="/admin/dashboard/users">Users</a>
+				<a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/admin/dashboard/users">Users</a>
 			</li>
 		</ul>
 		<ul class="navbar-nav ml-auto">
 			<li class="nav-item dropdown my-4 my-lg-0">
-				<a class="nav-link dropdown-toggle" href="#" id="userDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User</a>
+				<a class="nav-link dropdown-toggle" href="#" id="userDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
 				<div class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
 					<a class="dropdown-item" data-toggle="modal" data-target="#resetPasswordModal">Reset Password</a>
 					<div class="dropdown-divider"></div>
@@ -60,3 +59,4 @@
 		</div>
 	</div>
 </div>
+

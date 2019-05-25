@@ -9,7 +9,7 @@ import { OrderComponent } from './admin/dashboard/order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ForgotComponent } from './admin/forgot/forgot.component';
 import { UserComponent } from './admin/dashboard/user/user.component';
-import { OrderNewComponent } from './admin/dashboard/order/create/order-new.component';
+import { OrderNewComponent } from './admin/dashboard/order/add/order-add.component';
 
 const routes: Routes = [{
     path: '',
@@ -29,12 +29,12 @@ const routes: Routes = [{
     component: UserComponent,
     canActivate: [AuthGuard]
 }, {
-    path: 'admin/dashboard/order/:orderid',
-    component: OrderComponent,
+    path: 'admin/dashboard/order/add',
+    component: OrderNewComponent,
     canActivate: [AuthGuard]
 }, {
-    path: 'admin/dashboard/create/order',
-    component: OrderNewComponent,
+    path: 'admin/dashboard/order/:orderid',
+    component: OrderComponent,
     canActivate: [AuthGuard]
 }];
 

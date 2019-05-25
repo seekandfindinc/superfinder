@@ -4,8 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Owner } from '../../../../models/owner.model';
 
 @Component({
-    selector: 'app-order-new',
-    templateUrl: './order-new.component.html'
+    selector: 'app-order-add',
+    templateUrl: './order-add.component.html'
 })
 export class OrderNewComponent implements OnInit {
     buyers: Owner[] = [
