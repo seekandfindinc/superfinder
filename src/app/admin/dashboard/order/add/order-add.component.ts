@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Owner } from '../models/owner.model';
+import { Owner } from '../../../../models/owner.model';
 
 @Component({
-    selector: 'app-order-new',
-    templateUrl: './order-new.component.html',
-    styleUrls: ['./order-new.component.css']
+    selector: 'app-order-add',
+    templateUrl: './order-add.component.html'
 })
 export class OrderNewComponent implements OnInit {
     buyers: Owner[] = [

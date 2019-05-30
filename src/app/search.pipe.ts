@@ -17,7 +17,8 @@ export class SearchPipe implements PipeTransform {
                 return item.property_address.toLowerCase().includes(search.property_address.toLowerCase())
                     && item.corporation.toLowerCase().includes(search.corporation.toLowerCase())
                     && (item.lender ? item.lender.toLowerCase().includes(search.lender.toLowerCase()) : false)
-                    && (search.closed ? search.closed === item.closed : true);
+                    // tslint:disable-next-line
+                    && (search.closed ? search.closed == item.closed : true);
             });
         }
         return items;
