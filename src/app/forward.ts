@@ -1,4 +1,4 @@
 export interface Forward {
-	email: string;
-	coverage: number;
+    email: string;
+    coverage: number;
 }
