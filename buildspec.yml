@@ -5,11 +5,9 @@ phases:
       nodejs: 10
    commands:
      - echo "install step"
-     - npm install
-     - npm install -g @angular/cli
  build:
    commands:
-     - npm run-script build
+     - echo "build step"
  post_build:
    commands:
-     - aws s3 sync --delete ./dist/superfinder "s3://seekandfind-hosting"
+     - echo "post_build step"
