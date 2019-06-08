@@ -3,17 +3,10 @@ os: linux
 files:
   - source: /
     destination: /var
-permissions:
-  - object: /home/ubuntu
-    pattern: "**"
-    owner: ubuntu
-    group: ubuntu
 hooks:
   ApplicationStart:
     - location: scripts/start_server.sh
       timeout: 300
-      runas: ubuntu
   ApplicationStop:
     - location: scripts/stop_server.sh
       timeout: 300
-      runas: ubuntu
