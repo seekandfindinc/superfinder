@@ -1,6 +1,4 @@
 #!/bin/bash
-
 set -ex
-
-pm2 stop all
-pm2 delete all
+pm2 stop all > /home/ubuntu/output.log
+pm2 delete all >> /home/ubuntu/output.log

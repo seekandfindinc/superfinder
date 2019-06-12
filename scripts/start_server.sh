@@ -1,3 +1,3 @@
 #!/bin/bash
 set -ex
-pm2 list
+pm2 list >> /home/ubuntu/output.log
