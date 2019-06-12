@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo pm2 list >> /home/ubuntu/output.log
+pm2 list >> /home/ubuntu/output.log
