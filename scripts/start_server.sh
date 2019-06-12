@@ -1,5 +1,3 @@
 #!/bin/bash
-
 set -ex
-
-sudo pm2 list
+pm2 list
