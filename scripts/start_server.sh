@@ -1,3 +1,5 @@
 #!/bin/bash
-set -ex
-sudo pm2 list >> /home/ubuntu/output.log
+
+npm -v
+
+# sudo pm2 list >> /home/ubuntu/output.log
