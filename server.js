@@ -217,7 +217,7 @@ app.post('/api/user/forgot', function (req, res) {
 				smtpTransporter.sendMail({
 					from: 'team@seekandfindinc.com',
 					to: user.email,
-					html: passwordResetStepOneEmail.replace('[PASSWORD_RESERURL]', config.email_domain + '/api/user/forgot/' + hash),
+					html: passwordResetStepOneEmail.replace('[PASSWORD_RESET_URL]', config.email_domain + '/api/user/forgot/' + hash),
 					subject: 'Reset Password'
 				}, function (error, info) {
 					if (error) {
