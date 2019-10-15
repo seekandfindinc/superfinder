@@ -1,7 +1,6 @@
-const argv = require('minimist')(process.argv.slice(2))
 const Sequelize = require('sequelize')
-const sequelize = new Sequelize(argv.dbname, argv.dbuser, argv.dbpass, {
-	host: argv.dbhost,
+const sequelize = new Sequelize(process.env.RDS_DB_NAME, process.env.RDS_USERNAME, process.env.RDS_PASSWORD, {
+	host: process.env.RDS_HOSTNAME,
 	dialect: 'mysql',
 	logging: false
 })

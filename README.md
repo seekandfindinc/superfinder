@@ -18,4 +18,4 @@
 
 - Run `npm run-script build` to build the project.
 
-- Run `node server.js --dbname dbname --dbuser dbuser --dbpass dbpass --dbhost dbhost` to start it.
+- Run `node server.js` to start it.
