@@ -587,4 +587,5 @@ app.get('/*', function (req, res) {
 	res.sendFile(path.resolve('/dist/superfinder/index.html'))
 })
 
-app.listen(80, () => console.log(`listening on port 80`))
+var port = process.env.PORT || 3000
+app.listen(port, () => console.log(`listening on port ` + port))
