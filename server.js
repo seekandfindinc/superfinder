@@ -1,11 +1,8 @@
 const AWS = require('aws-sdk')
 const express = require('express')
-const http = require('http')
-const https = require('https')
 const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt')
 const Chance = require('chance')
-
 const chance = new Chance()
 const cors = require('cors')
 const path = require('path')
@@ -37,16 +34,6 @@ const s3 = new AWS.S3({
 })
 
 const models = require('./models')
-
-http.createServer(function (req, res) {
-	res.writeHead(307, { Location: 'https://' + req.headers.host + req.url })
-	res.end()
-}).listen(8080)
-
-https.createServer({
-	key: config.key,
-	cert: config.cert
-}, app).listen(8443)
 
 let authToken = function (req, res, next) {
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') return next()
@@ -599,3 +586,5 @@ app.post('/api/document', [authToken, upload.single('file')], function (req, res
 app.get('/*', function (req, res) {
 	res.sendFile(path.resolve('/dist/superfinder/index.html'))
 })
+
+app.listen(80, () => console.log(`listening on port 80`))
