@@ -18,7 +18,7 @@ const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const fs = require('fs')
-const config = require('./config')
+const config = fs.existsSync(path.resolve('/config/index.js')) ? require('./config') : {}
 
 const smtpTransporter = nodemailer.createTransport({
 	SES: new AWS.SES({
