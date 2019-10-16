@@ -16,6 +16,4 @@
 
 - Configure config files in "config" folder.
 
-- Run `npm run-script build` to build the project.
-
-- Run `node server.js` to start it.
+- Run `npm run-script build && node server.js` to start it.
