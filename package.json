@@ -7,8 +7,7 @@
     "build": "ng build --aot --prod --build-optimizer",
     "test": "ng test",
     "lint": "ng lint && ./node_modules/.bin/eslint '**/*.js'",
-    "e2e": "ng e2e",
-    "start-site": "ng build --aot --prod --build-optimizer && node server.js"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
