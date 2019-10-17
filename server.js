@@ -13,7 +13,6 @@ const multer = require('multer')
 const nodemailer = require('nodemailer')
 const Sequelize = require('sequelize')
 const jwt = require('jsonwebtoken')
-
 const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
@@ -556,7 +555,7 @@ app.post('/api/order/:id/forward', authToken, function (req, res) {
 app.get('/api/document', function (req, res) {
 	res.attachment(req.query.key)
 	var fileStream = s3.getObject({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Key: req.query.key
 	}).createReadStream()
 	fileStream.pipe(res)
@@ -564,7 +563,7 @@ app.get('/api/document', function (req, res) {
 
 app.get('/api/documents/:id', authToken, function (req, res) {
 	s3.listObjectsV2({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Prefix: req.params.id + '/'
 	}, function (err, data) {
 		if (err) res.status(500).send(err.stack)
@@ -574,7 +573,7 @@ app.get('/api/documents/:id', authToken, function (req, res) {
 
 app.post('/api/document', [authToken, upload.single('file')], function (req, res) {
 	s3.upload({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Key: req.body.OrderId + '/' + req.file.originalname,
 		Body: req.file.buffer
 	}, function (err, data) {
@@ -584,7 +583,7 @@ app.post('/api/document', [authToken, upload.single('file')], function (req, res
 })
 
 app.get('/*', function (req, res) {
-	res.sendFile(path.resolve('/dist/superfinder/index.html'))
+	res.sendFile(path.resolve(__dirname, '/dist/superfinder/index.html'))
 })
 
 var port = process.env.PORT || 3000

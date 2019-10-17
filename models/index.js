@@ -4,7 +4,6 @@ const sequelize = new Sequelize(process.env.RDS_DB_NAME, process.env.RDS_USERNAM
 	dialect: 'mysql',
 	logging: false
 })
-console.log(process.env)
 const User = sequelize.define('User', {
 	email: {
 		type: Sequelize.STRING,
