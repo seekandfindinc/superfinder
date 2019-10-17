@@ -583,9 +583,7 @@ app.post('/api/document', [authToken, upload.single('file')], function (req, res
 })
 
 app.get('/*', function (req, res) {
-	console.log(path.resolve(__dirname, '/dist/superfinder/index.html'))
-	console.log(path.join(__dirname, '/dist/superfinder/index.html'))
-	res.sendFile(path.resolve(__dirname, '/dist/superfinder/index.html'))
+	res.sendFile(path.join(__dirname, '/dist/superfinder/index.html'))
 })
 
 var port = process.env.PORT || 3000
