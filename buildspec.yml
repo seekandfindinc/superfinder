@@ -7,4 +7,5 @@ phases:
       nodejs: 8
   build:
     commands:
+      - npm install
       - npm run-script build
