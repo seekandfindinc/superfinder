@@ -1,3 +1,5 @@
+const dotenv = require('dotenv')
+dotenv.config()
 const AWS = require('aws-sdk')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -17,19 +19,18 @@ const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const fs = require('fs')
-const config = fs.existsSync(path.resolve('/config/index.js')) ? require('./config') : {}
 
 const smtpTransporter = nodemailer.createTransport({
 	SES: new AWS.SES({
 		region: 'us-east-1',
-		accessKeyId: config.awsUsername,
-		secretAccessKey: config.awsPassword
+		accessKeyId: process.env.AWS_KEY_ID,
+		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 	})
 })
 
 const s3 = new AWS.S3({
-	accessKeyId: config.awsUsername,
-	secretAccessKey: config.awsPassword
+	accessKeyId: process.env.AWS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
 const models = require('./models')
@@ -153,7 +154,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 						smtpTransporter.sendMail({
 							from: 'team@seekandfindinc.com',
 							to: user.email,
-							html: passwordResetStepTwoEmail.replace('[NEW_PASSWORD]', password).replace('[LOGIN_URL]', config.email_domain),
+							html: passwordResetStepTwoEmail.replace('[NEW_PASSWORD]', password).replace('[LOGIN_URL]', process.env.DNS),
 							subject: 'Reset Password'
 						}, function (error, info) {
 							if (error) {
@@ -161,7 +162,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 							} else {
 								console.log('Message sent: ' + info.response)
 							}
-							return res.redirect(config.email_domain + '/admin/user/forgot?status=s')
+							return res.redirect(process.env.DNS + '/admin/user/forgot?status=s')
 						})
 					}).catch((err) => {
 						return res.status(500).send(err.stack)
@@ -173,7 +174,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 				return res.status(500).send(err.stack)
 			})
 		} else {
-			return res.redirect(config.email_domain + '/admin/user/forgot?status=f')
+			return res.redirect(process.env.DNS + '/admin/user/forgot?status=f')
 		}
 	}).catch((err) => {
 		res.status(500).send(err.stack)
@@ -203,7 +204,7 @@ app.post('/api/user/forgot', function (req, res) {
 				smtpTransporter.sendMail({
 					from: 'team@seekandfindinc.com',
 					to: user.email,
-					html: passwordResetStepOneEmail.replace('[PASSWORD_RESERURL]', config.email_domain + '/api/user/forgot/' + hash),
+					html: passwordResetStepOneEmail.replace('[PASSWORD_RESET_URL]', process.env.DNS + '/api/user/forgot/' + hash),
 					subject: 'Reset Password'
 				}, function (error, info) {
 					if (error) {
