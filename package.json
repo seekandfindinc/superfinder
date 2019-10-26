@@ -67,7 +67,6 @@
     "eslint-plugin-node": "9.0.1",
     "eslint-plugin-promise": "4.1.1",
     "eslint-plugin-standard": "4.0.0",
-    "husky": "3.0.9",
     "jasmine-core": "~3.2.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "4.1.0",
@@ -79,10 +78,5 @@
     "ts-node": "~7.0.1",
     "tslint": "~5.11.0",
     "typescript": "~3.2.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
   }
 }
