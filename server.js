@@ -1,11 +1,10 @@
+const dotenv = require('dotenv')
+dotenv.config()
 const AWS = require('aws-sdk')
 const express = require('express')
-const http = require('http')
-const https = require('https')
 const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt')
 const Chance = require('chance')
-
 const chance = new Chance()
 const cors = require('cors')
 const path = require('path')
@@ -16,37 +15,25 @@ const multer = require('multer')
 const nodemailer = require('nodemailer')
 const Sequelize = require('sequelize')
 const jwt = require('jsonwebtoken')
-
 const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const fs = require('fs')
-const config = require('./config')
 
 const smtpTransporter = nodemailer.createTransport({
 	SES: new AWS.SES({
 		region: 'us-east-1',
-		accessKeyId: config.awsUsername,
-		secretAccessKey: config.awsPassword
+		accessKeyId: process.env.AWS_KEY_ID,
+		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 	})
 })
 
 const s3 = new AWS.S3({
-	accessKeyId: config.awsUsername,
-	secretAccessKey: config.awsPassword
+	accessKeyId: process.env.AWS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
 const models = require('./models')
-
-http.createServer(function (req, res) {
-	res.writeHead(307, { Location: 'https://' + req.headers.host + req.url })
-	res.end()
-}).listen(8080)
-
-https.createServer({
-	key: config.key,
-	cert: config.cert
-}, app).listen(8443)
 
 let authToken = function (req, res, next) {
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') return next()
@@ -167,7 +154,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 						smtpTransporter.sendMail({
 							from: 'team@seekandfindinc.com',
 							to: user.email,
-							html: passwordResetStepTwoEmail.replace('[NEW_PASSWORD]', password).replace('[LOGIN_URL]', config.email_domain),
+							html: passwordResetStepTwoEmail.replace('[NEW_PASSWORD]', password).replace('[LOGIN_URL]', process.env.DNS),
 							subject: 'Reset Password'
 						}, function (error, info) {
 							if (error) {
@@ -175,7 +162,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 							} else {
 								console.log('Message sent: ' + info.response)
 							}
-							return res.redirect(config.email_domain + '/admin/user/forgot?status=s')
+							return res.redirect(process.env.DNS + '/admin/user/forgot?status=s')
 						})
 					}).catch((err) => {
 						return res.status(500).send(err.stack)
@@ -187,7 +174,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 				return res.status(500).send(err.stack)
 			})
 		} else {
-			return res.redirect(config.email_domain + '/admin/user/forgot?status=f')
+			return res.redirect(process.env.DNS + '/admin/user/forgot?status=f')
 		}
 	}).catch((err) => {
 		res.status(500).send(err.stack)
@@ -217,7 +204,7 @@ app.post('/api/user/forgot', function (req, res) {
 				smtpTransporter.sendMail({
 					from: 'team@seekandfindinc.com',
 					to: user.email,
-					html: passwordResetStepOneEmail.replace('[PASSWORD_RESET_URL]', config.email_domain + '/api/user/forgot/' + hash),
+					html: passwordResetStepOneEmail.replace('[PASSWORD_RESET_URL]', process.env.DNS + '/api/user/forgot/' + hash),
 					subject: 'Reset Password'
 				}, function (error, info) {
 					if (error) {
@@ -569,7 +556,7 @@ app.post('/api/order/:id/forward', authToken, function (req, res) {
 app.get('/api/document', function (req, res) {
 	res.attachment(req.query.key)
 	var fileStream = s3.getObject({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Key: req.query.key
 	}).createReadStream()
 	fileStream.pipe(res)
@@ -577,7 +564,7 @@ app.get('/api/document', function (req, res) {
 
 app.get('/api/documents/:id', authToken, function (req, res) {
 	s3.listObjectsV2({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Prefix: req.params.id + '/'
 	}, function (err, data) {
 		if (err) res.status(500).send(err.stack)
@@ -587,7 +574,7 @@ app.get('/api/documents/:id', authToken, function (req, res) {
 
 app.post('/api/document', [authToken, upload.single('file')], function (req, res) {
 	s3.upload({
-		Bucket: config.awsS3Bucket,
+		Bucket: process.env.S3_BUCKET,
 		Key: req.body.OrderId + '/' + req.file.originalname,
 		Body: req.file.buffer
 	}, function (err, data) {
@@ -597,5 +584,8 @@ app.post('/api/document', [authToken, upload.single('file')], function (req, res
 })
 
 app.get('/*', function (req, res) {
-	res.sendFile(path.resolve('/dist/superfinder/index.html'))
+	res.sendFile(path.join(__dirname, '/dist/superfinder/index.html'))
 })
+
+var port = process.env.PORT || 3000
+app.listen(port, () => console.log(`listening on port ` + port))
