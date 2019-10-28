@@ -19,19 +19,19 @@ const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const fs = require('fs')
-
-const smtpTransporter = nodemailer.createTransport({
-	SES: new AWS.SES({
-		region: 'us-east-1',
-		accessKeyId: process.env.AWS_KEY_ID,
-		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-	})
-})
-
-const s3 = new AWS.S3({
+AWS.config.update({
+	region: 'us-east-1',
 	accessKeyId: process.env.AWS_KEY_ID,
 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
+
+const smtpTransporter = nodemailer.createTransport({
+	SES: new AWS.SES()
+})
+
+const s3 = new AWS.S3()
+
+const docClient = new AWS.DynamoDB.DocumentClient()
 
 const models = require('./models')
 
@@ -58,11 +58,24 @@ app.get('/api/user', function (req, res) {
 		if (user) {
 			if (bcrypt.compareSync(req.query.password, user.password)) {
 				let token = jwt.sign(user, 'secretKey')
-				res.json({
-					token: token,
-					user: {
-						id: user.id,
-						initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
+				docClient.put({
+					TableName: process.env.DYNAMO_SESSION_TBL,
+					Item: {
+						'id': user.id,
+						'hash': token,
+						'initials': user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
+					}
+				}, function (err, data) {
+					if (err) {
+						res.status(500).send('Unable to add item. Error JSON:', JSON.stringify(err, null, 2))
+					} else {
+						res.json({
+							token: token,
+							user: {
+								id: user.id,
+								initials: user.first_name.substring(0, 1) + user.last_name.substring(0, 1)
+							}
+						})
 					}
 				})
 			} else {
