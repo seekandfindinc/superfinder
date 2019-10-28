@@ -183,14 +183,18 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 
 app.post('/api/user/forgot', function (req, res) {
 	const passwordResetStepOneEmail = fs.readFileSync('email_templates/password_reset_step1_email.html', 'utf8')
+	let query
+	if (req.body.email) {
+		query = {
+			email: req.body.email
+		}
+	} else {
+		query = {
+			id: req.body.id
+		}
+	}
 	models.User.findOne({
-		where: {
-			$or: [{
-				email: req.body.email
-			}, {
-				id: req.body.id
-			}]
-		},
+		where: query,
 		raw: true
 	}).then((user) => {
 		if (user) {
