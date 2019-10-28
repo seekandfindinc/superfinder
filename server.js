@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/', express.static('./dist/superfinder/'))
 
 app.get('/api/user', function (req, res) {
-	models.User.find({
+	models.User.findOne({
 		where: {
 			email: req.query.email,
 			approved: true
@@ -119,7 +119,7 @@ app.get('/api/users', authToken, function (req, res) {
 
 app.get('/api/user/forgot/:hash', function (req, res) {
 	const passwordResetStepTwoEmail = fs.readFileSync('email_templates/password_reset_step2_email.html', 'utf8')
-	models.UserPasswordReset.find({
+	models.UserPasswordReset.findOne({
 		where: {
 			hash: req.params.hash,
 			used: false,
@@ -138,7 +138,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 					id: passwordReset.UserId
 				}
 			}).then((user) => {
-				models.User.find({
+				models.User.findOne({
 					where: {
 						id: passwordReset.UserId
 					},
@@ -183,7 +183,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 
 app.post('/api/user/forgot', function (req, res) {
 	const passwordResetStepOneEmail = fs.readFileSync('email_templates/password_reset_step1_email.html', 'utf8')
-	models.User.find({
+	models.User.findOne({
 		where: {
 			$or: [{
 				email: req.body.email
@@ -314,7 +314,7 @@ app.get('/api/order', authToken, function (req, res) {
 })
 
 app.get('/api/order/:id', authToken, function (req, res) {
-	models.Order.find({
+	models.Order.findOne({
 		where: {
 			id: req.params.id
 		},
@@ -479,7 +479,7 @@ app.get('/api/order/:id/forwards', authToken, function (req, res) {
 })
 
 app.post('/api/order/:id/forward', authToken, function (req, res) {
-	models.Order.find({
+	models.Order.findOne({
 		where: {
 			id: req.params.id
 		},
