@@ -20,6 +20,18 @@ const app = express()
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const fs = require('fs')
+const redis = require('redis')
+const client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST)
+
+client.on('error', (err) => {
+	console.log('Error ' + err)
+})
+
+client.on('connect', () => {
+	console.log('Redis client connected')
+})
+
+const ordersRedisKey = 'dashboard:orders'
 
 const smtpTransporter = nodemailer.createTransport({
 	SES: new AWS.SES({
@@ -264,57 +276,77 @@ app.post('/api/register', [
 })
 
 app.get('/api/order', authToken, function (req, res) {
-	let orderWhere = {}
-	if (req.query) {
-		for (let item in req.query) {
-			if (item === 'corporation' || item === 'property_address' || item === 'lender') {
-				orderWhere[item] = {
-					$like: '%' + req.query[item] + '%'
-				}
-			} else if (item === 'reference_number' || item === 'closed') {
-				orderWhere[item] = req.query[item]
-			} else if (item === 'closing_date') {
-				orderWhere[item] = {
-					$gte: req.query[item] + ' 00:00:00',
-					$lte: req.query[item] + ' 23:59:59'
-				}
-			}
-		}
-	}
-	models.Order.findAll({
-		raw: true,
-		where: orderWhere,
-		order: [['updatedAt', 'DESC']]
-	}).then((orders) => {
-		if (orders.length > 0) {
-			models.Buyer.findAll({
-				raw: true,
-				attributes: ['name', 'OrderId']
-			}).then((buyers) => {
-				models.Seller.findAll({
-					attributes: ['name', 'OrderId'],
-					raw: true
-				}).then((sellers) => {
-					lodash.forEach(orders, function (order) {
-						order.buyers = lodash.map(lodash.filter(buyers, {
-							OrderId: order.id
-						}), 'name')
-						order.sellers = lodash.map(lodash.filter(sellers, {
-							OrderId: order.id
-						}), 'name')
-					})
-					res.send(orders)
-				}).catch((err) => {
-					res.status(500).send(err.stack)
-				})
-			}).catch((err) => {
-				res.status(500).send(err.stack)
+	// adding caching here
+	return client.get(ordersRedisKey, (err, orders) => {
+		if (err) res.status(500).send(err.stack)
+		if (orders) {
+			orders = JSON.parse(orders)
+			return res.json({
+				source: 'cache',
+				data: orders
 			})
 		} else {
-			res.send([])
+			let orderWhere = {}
+			if (req.query) {
+				for (let item in req.query) {
+					if (item === 'corporation' || item === 'property_address' || item === 'lender') {
+						orderWhere[item] = {
+							$like: '%' + req.query[item] + '%'
+						}
+					} else if (item === 'reference_number' || item === 'closed') {
+						orderWhere[item] = req.query[item]
+					} else if (item === 'closing_date') {
+						orderWhere[item] = {
+							$gte: req.query[item] + ' 00:00:00',
+							$lte: req.query[item] + ' 23:59:59'
+						}
+					}
+				}
+			}
+			models.Order.findAll({
+				raw: true,
+				where: orderWhere,
+				order: [['updatedAt', 'DESC']]
+			}).then((orders) => {
+				if (orders.length > 0) {
+					models.Buyer.findAll({
+						raw: true,
+						attributes: ['name', 'OrderId']
+					}).then((buyers) => {
+						models.Seller.findAll({
+							attributes: ['name', 'OrderId'],
+							raw: true
+						}).then((sellers) => {
+							lodash.forEach(orders, function (order) {
+								order.buyers = lodash.map(lodash.filter(buyers, {
+									OrderId: order.id
+								}), 'name')
+								order.sellers = lodash.map(lodash.filter(sellers, {
+									OrderId: order.id
+								}), 'name')
+							})
+							client.setex(ordersRedisKey, process.env.REDIS_EXPIRATION, JSON.stringify(orders))
+							return res.json({
+								source: 'api',
+								data: JSON.stringify(orders)
+							})
+						}).catch((err) => {
+							return res.status(500).send(err.stack)
+						})
+					}).catch((err) => {
+						return res.status(500).send(err.stack)
+					})
+				} else {
+					client.setex(ordersRedisKey, process.env.REDIS_EXPIRATION, JSON.stringify([]))
+					return res.json({
+						source: 'api',
+						data: []
+					})
+				}
+			}).catch((err) => {
+				return res.status(500).send(err.stack)
+			})
 		}
-	}).catch((err) => {
-		res.status(500).send(err.stack)
 	})
 })
 
@@ -364,6 +396,7 @@ app.put('/api/order/:id', authToken, function (req, res) {
 		}
 	}).then((order) => {
 		if (req.body.closed) {
+			client.del(ordersRedisKey)
 			res.send(true)
 		} else {
 			models.Buyer.update({
@@ -388,6 +421,7 @@ app.put('/api/order/:id', authToken, function (req, res) {
 					})
 					models.Buyer.bulkCreate(req.body.buyers).then((buyers) => {
 						models.Seller.bulkCreate(req.body.sellers).then((sellers) => {
+							client.del(ordersRedisKey)
 							res.send(true)
 						}).catch((err) => {
 							return res.status(500).send(err.stack)
@@ -424,6 +458,7 @@ app.post('/api/order', authToken, function (req, res) {
 		})
 		models.Buyer.bulkCreate(req.body.buyers).then((buyers) => {
 			models.Seller.bulkCreate(req.body.sellers).then((sellers) => {
+				client.del(ordersRedisKey)
 				return res.send(order)
 			}).catch((err) => {
 				return res.status(500).send(err.stack)

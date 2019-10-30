@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
             $('#order_new').show();
         }
         this.http.get('/api/order').subscribe((val) => {
-            this.orders = val;
+            this.orders = val.data;
         }, response => {
             console.log('GET call in error', response);
         }, () => {
