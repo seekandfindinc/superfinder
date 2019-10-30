@@ -9,7 +9,6 @@ import { AdminComponent } from './admin/admin.component';
 import { OrderComponent } from './admin/dashboard/order/order.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SearchPipe } from './search.pipe';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import * as $ from 'jquery';
 import * as bootstrap from 'bootstrap';
 import { ForgotComponent } from './admin/forgot/forgot.component';
@@ -21,7 +20,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
-import { FileDropModule } from 'ngx-file-drop';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 @NgModule({
     declarations: [
@@ -40,10 +39,9 @@ import { FileDropModule } from 'ngx-file-drop';
         BrowserModule,
         HttpClientModule,
         FormsModule,
-        NgbModule,
         NgxSpinnerModule,
         AppRoutingModule,
-        FileDropModule
+        NgxFileDropModule,
     ],
     providers: [CookieService, {
         provide: HTTP_INTERCEPTORS,

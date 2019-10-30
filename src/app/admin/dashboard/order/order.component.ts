@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { NavbarComponent } from '../../../navbar/navbar.component';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Forward } from '../../../forward';
 import { Note } from '../../../note';
-import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
+import { NgxFileDropEntry, FileSystemFileEntry } from 'ngx-file-drop';
 
 @Component({
     selector: 'app-order',
@@ -14,8 +14,8 @@ import { UploadEvent, UploadFile, FileSystemFileEntry } from 'ngx-file-drop';
     styleUrls: ['./order.component.css']
 })
 export class OrderComponent implements OnInit {
-    public files: UploadFile[] = [];
-    @ViewChild('noteList') private myScrollContainer: ElementRef;
+    public files: NgxFileDropEntry[] = [];
+    @ViewChild('noteList', { static: false }) private myScrollContainer: ElementRef;
     id: number;
     inEditMode = false;
     public forwards: any = [];
@@ -198,10 +198,9 @@ export class OrderComponent implements OnInit {
             console.log('The PUT observable is now completed.');
         });
     }
-
-    public dropped(event: UploadEvent, orderID: string) {
-        this.files = event.files;
-        for (const droppedFile of event.files) {
+    public dropped(files: NgxFileDropEntry[], orderID: string) {
+        this.files = files;
+        for (const droppedFile of files) {
             if (droppedFile.fileEntry.isFile) {
                 const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
                 fileEntry.file((file: File) => {

@@ -14,6 +14,7 @@ const moment = require('moment')
 const multer = require('multer')
 const nodemailer = require('nodemailer')
 const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const jwt = require('jsonwebtoken')
 const app = express()
 const storage = multer.memoryStorage()
@@ -124,7 +125,7 @@ app.get('/api/user/forgot/:hash', function (req, res) {
 			hash: req.params.hash,
 			used: false,
 			expire_date: {
-				$gte: moment().format('YYYY-MM-DD HH:mm:ss')
+				[Op.gt]: moment().format('YYYY-MM-DD HH:mm:ss')
 			}
 		},
 		raw: true
