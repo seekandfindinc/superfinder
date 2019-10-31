@@ -19,11 +19,13 @@ AWS_KEY_ID = key
 AWS_SECRET_ACCESS_KEY = secret
 ## HOST FOR EMAILS
 DNS = http://localhost:4200
+## REDIS Details
+REDIS_HOST = 127.0.0.1
+REDIS_PORT = 6379
+REDIS_EXPIRATION = 60
 ```
 
-- Run `npm start` for a dev server to turn on FE
-
-- Run `node server.js`  to turn on BE
+- Run `npm start`
 
 - Navigate to `http://localhost:4200`. The app will automatically reload if you change any of the source files.
 
