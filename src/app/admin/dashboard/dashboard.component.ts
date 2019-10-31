@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit {
         if (action === 'order_new') {
             $('#order_new').show();
         }
-        this.http.get('/api/order').subscribe((val : any) => {
+        this.http.get('/api/order').subscribe((val: any) => {
             this.orders = val.data;
         }, response => {
             console.log('GET call in error', response);
