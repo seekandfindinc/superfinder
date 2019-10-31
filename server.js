@@ -280,10 +280,9 @@ app.get('/api/order', authToken, function (req, res) {
 	return client.get(ordersRedisKey, (err, orders) => {
 		if (err) res.status(500).send(err.stack)
 		if (orders) {
-			orders = JSON.parse(orders)
 			return res.json({
 				source: 'cache',
-				data: orders
+				data: JSON.parse(orders)
 			})
 		} else {
 			let orderWhere = {}
@@ -328,7 +327,7 @@ app.get('/api/order', authToken, function (req, res) {
 							client.setex(ordersRedisKey, process.env.REDIS_EXPIRATION, JSON.stringify(orders))
 							return res.json({
 								source: 'api',
-								data: JSON.stringify(orders)
+								data: orders
 							})
 						}).catch((err) => {
 							return res.status(500).send(err.stack)
