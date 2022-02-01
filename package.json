@@ -42,7 +42,7 @@
     "ngx-cookie-service": "1.0.10",
     "ngx-file-drop": "8.0.8",
     "ngx-spinner": "8.0.3",
-    "nodemailer": "4.6.8",
+    "nodemailer": "6.6.1",
     "popper.js": "1.14.4",
     "redis": "2.8.0",
     "rxjs": "^6.5.3",
