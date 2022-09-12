@@ -36,7 +36,7 @@
     "lodash": "4.17.21",
     "mime": "2.3.1",
     "minimist": "1.2.6",
-    "moment": "2.22.2",
+    "moment": "2.29.4",
     "multer": "1.4.1",
     "mysql2": "1.6.1",
     "ngx-cookie-service": "1.0.10",
